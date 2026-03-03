@@ -13,9 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
-        $middleware->trustHosts(at: [
+        $middleware->trustHosts(at: fn () => [
             'localhost',
-            env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : null,
+            ...config('app.url') ? [parse_url(config('app.url'), PHP_URL_HOST)] : [],
         ]);
         $middleware->validateCsrfTokens(except: ['api/*']);
         $middleware->alias([
