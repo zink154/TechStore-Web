@@ -13,10 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
-        $middleware->trustHosts(at: fn () => [
-            'localhost',
-            ...config('app.url') ? [parse_url(config('app.url'), PHP_URL_HOST)] : [],
-        ]);
         $middleware->validateCsrfTokens(except: ['api/*']);
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
