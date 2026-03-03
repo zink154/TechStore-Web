@@ -129,18 +129,18 @@ onMounted(() => {
         <div
           v-for="product in products"
           :key="product.id"
-          class="bg-white rounded-lg shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100"
+          class="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden border border-gray-100"
         >
           <RouterLink :to="`/products/${product.slug}`">
-            <div class="h-48 bg-gray-100 flex items-center justify-center">
-              <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover" />
-              <span v-else class="text-gray-400 text-sm">No Image</span>
+            <div class="h-48 bg-gray-100 overflow-hidden">
+              <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <div v-else class="h-full flex items-center justify-center text-gray-400 text-sm">No Image</div>
             </div>
           </RouterLink>
           <div class="p-4">
             <p class="text-xs text-indigo-600 font-medium mb-1">{{ product.category?.name }}</p>
             <RouterLink :to="`/products/${product.slug}`">
-              <h3 class="font-semibold text-gray-900 truncate hover:text-indigo-600">{{ product.name }}</h3>
+              <h3 class="font-semibold text-gray-900 truncate group-hover:text-indigo-600 transition-colors">{{ product.name }}</h3>
             </RouterLink>
             <div class="flex justify-between items-center mt-3">
               <span class="text-lg font-bold text-gray-900">${{ product.price }}</span>

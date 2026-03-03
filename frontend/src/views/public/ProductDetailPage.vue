@@ -44,8 +44,8 @@ function addToCart() {
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <!-- Image -->
-          <div class="bg-white rounded-lg border border-gray-100 h-96 flex items-center justify-center overflow-hidden">
-            <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover" />
+          <div class="bg-white rounded-xl border border-gray-100 h-96 flex items-center justify-center overflow-hidden shadow-sm">
+            <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover hover:scale-105 transition-transform duration-300" />
             <span v-else class="text-gray-400">No Image</span>
           </div>
 
