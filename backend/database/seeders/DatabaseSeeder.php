@@ -13,27 +13,37 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Roles
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'customer']);
+        // Roles (skip if already exist)
+        if (Role::count() === 0) {
+            Role::create(['name' => 'admin']);
+            Role::create(['name' => 'customer']);
+        }
 
         // Admin account
-        $admin = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@techstore.test',
-            'password' => bcrypt('password'),
-        ]);
-        $admin->assignRole('admin');
+        if (!User::where('email', 'admin@techstore.test')->exists()) {
+            $admin = User::factory()->create([
+                'name' => 'Admin',
+                'email' => 'admin@techstore.test',
+                'password' => bcrypt('password'),
+            ]);
+            $admin->assignRole('admin');
+        }
 
         // Customer account
-        $customer = User::factory()->create([
-            'name' => 'Customer',
-            'email' => 'user@techstore.test',
-            'password' => bcrypt('password'),
-        ]);
-        $customer->assignRole('customer');
+        if (!User::where('email', 'user@techstore.test')->exists()) {
+            $customer = User::factory()->create([
+                'name' => 'Customer',
+                'email' => 'user@techstore.test',
+                'password' => bcrypt('password'),
+            ]);
+            $customer->assignRole('customer');
+        }
 
-        // Categories
+        // Categories + Products (skip if already seeded)
+        if (Category::count() > 0) {
+            return;
+        }
+
         $categories = collect([
             'Laptops', 'Smartphones', 'Tablets', 'Accessories',
             'Audio', 'Gaming',
@@ -42,7 +52,6 @@ class DatabaseSeeder extends Seeder
             'slug' => Str::slug($name),
         ]));
 
-        // Sample products with placeholder images
         $products = [
             ['name' => 'MacBook Pro 16"', 'category' => 'Laptops', 'price' => 2499.99, 'stock' => 10, 'description' => 'Apple M3 Pro chip, 18GB RAM, 512GB SSD. Stunning Liquid Retina XDR display with ProMotion.'],
             ['name' => 'Dell XPS 15', 'category' => 'Laptops', 'price' => 1799.99, 'stock' => 15, 'description' => 'Intel Core i7-13700H, 16GB RAM, 512GB SSD. 15.6" OLED 3.5K InfinityEdge display.'],
@@ -61,7 +70,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Mechanical Keyboard K8', 'category' => 'Gaming', 'price' => 129.99, 'stock' => 25, 'description' => 'Hot-swappable switches, RGB backlight, aluminum frame. Tenkeyless wireless layout.'],
         ];
 
-        foreach ($products as $i => $p) {
+        foreach ($products as $p) {
             $category = $categories->firstWhere('name', $p['category']);
             Product::create([
                 'category_id' => $category->id,
