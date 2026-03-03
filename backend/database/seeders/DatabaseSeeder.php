@@ -21,20 +21,22 @@ class DatabaseSeeder extends Seeder
 
         // Admin account
         if (!User::where('email', 'admin@techstore.test')->exists()) {
-            $admin = User::factory()->create([
+            $admin = User::create([
                 'name' => 'Admin',
                 'email' => 'admin@techstore.test',
                 'password' => bcrypt('password'),
+                'email_verified_at' => now(),
             ]);
             $admin->assignRole('admin');
         }
 
         // Customer account
         if (!User::where('email', 'user@techstore.test')->exists()) {
-            $customer = User::factory()->create([
+            $customer = User::create([
                 'name' => 'Customer',
                 'email' => 'user@techstore.test',
                 'password' => bcrypt('password'),
+                'email_verified_at' => now(),
             ]);
             $customer->assignRole('customer');
         }
