@@ -5,8 +5,10 @@ import { useRoute, RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useCartStore } from '@/stores/cart'
 import { useI18n } from 'vue-i18n'
+import { useCurrency } from '@/composables/useCurrency'
 
 const { t } = useI18n()
+const { formatPrice } = useCurrency()
 const route = useRoute()
 const cart = useCartStore()
 const product = ref(null)
@@ -55,7 +57,7 @@ function addToCart() {
           <div>
             <p class="text-sm text-indigo-600 font-medium mb-2">{{ product.category?.name }}</p>
             <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
-            <p class="text-3xl font-extrabold text-gray-900 mb-4">${{ product.price }}</p>
+            <p class="text-3xl font-extrabold text-gray-900 mb-4">{{ formatPrice(product.price) }}</p>
 
             <div class="mb-6">
               <span v-if="product.stock > 0" class="text-green-600 bg-green-50 px-3 py-1 rounded-full text-sm font-medium">

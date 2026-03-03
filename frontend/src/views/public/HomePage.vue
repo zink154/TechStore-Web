@@ -5,8 +5,10 @@ import { RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useCartStore } from '@/stores/cart'
 import { useI18n } from 'vue-i18n'
+import { useCurrency } from '@/composables/useCurrency'
 
 const { t } = useI18n()
+const { formatPrice } = useCurrency()
 const cart = useCartStore()
 const featuredProducts = ref([])
 const categories = ref([])
@@ -187,7 +189,7 @@ onMounted(async () => {
               </RouterLink>
               <p class="text-xs text-gray-500 mt-1 line-clamp-1">{{ product.description }}</p>
               <div class="flex justify-between items-center mt-3">
-                <span class="text-lg font-bold text-gray-900">${{ product.price }}</span>
+                <span class="text-lg font-bold text-gray-900">{{ formatPrice(product.price) }}</span>
                 <button
                   v-if="product.stock > 0"
                   @click="addToCart(product)"

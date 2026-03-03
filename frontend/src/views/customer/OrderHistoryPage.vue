@@ -4,8 +4,10 @@ import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useI18n } from 'vue-i18n'
+import { useCurrency } from '@/composables/useCurrency'
 
 const { t } = useI18n()
+const { formatPrice } = useCurrency()
 const orders = ref([])
 const loading = ref(true)
 
@@ -47,14 +49,14 @@ onMounted(async () => {
               <span :class="[statusColors[order.status], 'px-3 py-1 rounded-full text-xs font-medium']">
                 {{ t(`orders.status.${order.status}`) }}
               </span>
-              <span class="font-bold text-gray-900">${{ order.total }}</span>
+              <span class="font-bold text-gray-900">{{ formatPrice(order.total) }}</span>
             </div>
           </div>
 
           <div class="border-t border-gray-100 pt-3 space-y-2">
             <div v-for="item in order.items" :key="item.id" class="flex justify-between text-sm">
               <span class="text-gray-600">{{ item.product_name }} x{{ item.quantity }}</span>
-              <span class="text-gray-900">${{ (item.price * item.quantity).toFixed(2) }}</span>
+              <span class="text-gray-900">{{ formatPrice(item.price * item.quantity) }}</span>
             </div>
           </div>
         </div>

@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '@/lib/axios'
+import { useCurrency } from '@/composables/useCurrency'
+
+const { formatPrice } = useCurrency()
 
 const products = ref([])
 const categories = ref([])
@@ -113,7 +116,7 @@ async function deleteProduct(id) {
               </div>
             </td>
             <td class="px-4 py-3 text-gray-500">{{ product.category?.name }}</td>
-            <td class="px-4 py-3 font-medium">${{ product.price }}</td>
+            <td class="px-4 py-3 font-medium">{{ formatPrice(product.price) }}</td>
             <td class="px-4 py-3">{{ product.stock }}</td>
             <td class="px-4 py-3">
               <span :class="product.is_active ? 'text-green-600' : 'text-red-500'" class="text-xs font-medium">

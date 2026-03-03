@@ -4,8 +4,10 @@ import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useCurrency } from '@/composables/useCurrency'
 
 const { t } = useI18n()
+const { formatPrice } = useCurrency()
 const cart = useCartStore()
 const auth = useAuthStore()
 </script>
@@ -34,7 +36,7 @@ const auth = useAuthStore()
             <!-- Info -->
             <div class="flex-1 min-w-0">
               <h3 class="font-medium text-gray-900 truncate">{{ item.name }}</h3>
-              <p class="text-sm text-gray-500">${{ item.price }} {{ t('cart.each') }}</p>
+              <p class="text-sm text-gray-500">{{ formatPrice(item.price) }} {{ t('cart.each') }}</p>
             </div>
 
             <!-- Quantity -->
@@ -45,7 +47,7 @@ const auth = useAuthStore()
             </div>
 
             <!-- Subtotal -->
-            <p class="font-semibold text-gray-900 w-24 text-right">${{ (item.price * item.quantity).toFixed(2) }}</p>
+            <p class="font-semibold text-gray-900 w-24 text-right">{{ formatPrice(item.price * item.quantity) }}</p>
 
             <!-- Remove -->
             <button @click="cart.removeItem(item.id)" class="text-red-500 hover:text-red-700 p-1 cursor-pointer">
@@ -60,7 +62,7 @@ const auth = useAuthStore()
         <div class="mt-6 bg-white rounded-lg shadow-sm border border-gray-100 p-6">
           <div class="flex justify-between items-center mb-4">
             <span class="text-lg text-gray-700">{{ t('cart.total', { count: cart.count }) }}</span>
-            <span class="text-2xl font-bold text-gray-900">${{ cart.total.toFixed(2) }}</span>
+            <span class="text-2xl font-bold text-gray-900">{{ formatPrice(cart.total) }}</span>
           </div>
           <div class="flex gap-4">
             <RouterLink to="/products" class="flex-1 text-center border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50">

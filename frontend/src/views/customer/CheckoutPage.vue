@@ -7,8 +7,10 @@ import { useAuthStore } from '@/stores/auth'
 import { loadStripe } from '@stripe/stripe-js'
 import api from '@/lib/axios'
 import { useI18n } from 'vue-i18n'
+import { useCurrency } from '@/composables/useCurrency'
 
 const { t } = useI18n()
+const { formatPrice } = useCurrency()
 const router = useRouter()
 const cart = useCartStore()
 const auth = useAuthStore()
@@ -122,7 +124,7 @@ async function handleCheckout() {
           </div>
 
           <button type="submit" :disabled="loading" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 cursor-pointer">
-            {{ loading ? t('checkout.placing') : `${t('checkout.place_order')} — $${cart.total.toFixed(2)}` }}
+            {{ loading ? t('checkout.placing') : `${t('checkout.place_order')} — ${formatPrice(cart.total)}` }}
           </button>
         </form>
 
@@ -132,12 +134,12 @@ async function handleCheckout() {
           <div class="space-y-3">
             <div v-for="item in cart.items" :key="item.id" class="flex justify-between text-sm">
               <span class="text-gray-600">{{ item.name }} x{{ item.quantity }}</span>
-              <span class="font-medium">${{ (item.price * item.quantity).toFixed(2) }}</span>
+              <span class="font-medium">{{ formatPrice(item.price * item.quantity) }}</span>
             </div>
           </div>
           <div class="border-t border-gray-200 mt-4 pt-4 flex justify-between">
             <span class="font-semibold text-gray-900">Total</span>
-            <span class="font-bold text-lg text-gray-900">${{ cart.total.toFixed(2) }}</span>
+            <span class="font-bold text-lg text-gray-900">{{ formatPrice(cart.total) }}</span>
           </div>
         </div>
       </div>

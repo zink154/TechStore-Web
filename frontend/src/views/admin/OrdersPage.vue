@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '@/lib/axios'
+import { useCurrency } from '@/composables/useCurrency'
+
+const { formatPrice } = useCurrency()
 
 const orders = ref([])
 const loading = ref(true)
@@ -58,7 +61,7 @@ async function updateStatus(orderId, newStatus) {
             <p class="text-xs text-gray-400 mt-1">{{ new Date(order.created_at).toLocaleString() }}</p>
           </div>
           <div class="text-right">
-            <span class="font-bold text-lg">${{ order.total }}</span>
+            <span class="font-bold text-lg">{{ formatPrice(order.total) }}</span>
             <div class="mt-2">
               <select
                 :value="order.status"
@@ -79,7 +82,7 @@ async function updateStatus(orderId, newStatus) {
         <div class="border-t border-gray-100 pt-3 space-y-1">
           <div v-for="item in order.items" :key="item.id" class="flex justify-between text-sm">
             <span class="text-gray-600">{{ item.product_name }} x{{ item.quantity }}</span>
-            <span>${{ (item.price * item.quantity).toFixed(2) }}</span>
+            <span>{{ formatPrice(item.price * item.quantity) }}</span>
           </div>
         </div>
       </div>

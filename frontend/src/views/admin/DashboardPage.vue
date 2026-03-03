@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '@/lib/axios'
+import { useCurrency } from '@/composables/useCurrency'
+
+const { formatPrice } = useCurrency()
 
 const stats = ref(null)
 const loading = ref(true)
@@ -43,7 +46,7 @@ onMounted(async () => {
         </div>
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
           <p class="text-sm text-gray-500">Revenue</p>
-          <p class="text-3xl font-bold text-green-600 mt-1">${{ Number(stats.total_revenue).toFixed(2) }}</p>
+          <p class="text-3xl font-bold text-green-600 mt-1">{{ formatPrice(stats.total_revenue) }}</p>
         </div>
       </div>
 
@@ -70,7 +73,7 @@ onMounted(async () => {
               </div>
               <div class="flex items-center gap-2">
                 <span :class="[statusColors[order.status], 'px-2 py-0.5 rounded-full text-xs capitalize']">{{ order.status }}</span>
-                <span class="font-medium">${{ order.total }}</span>
+                <span class="font-medium">{{ formatPrice(order.total) }}</span>
               </div>
             </div>
           </div>

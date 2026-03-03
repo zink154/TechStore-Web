@@ -5,8 +5,10 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useCartStore } from '@/stores/cart'
 import { useI18n } from 'vue-i18n'
+import { useCurrency } from '@/composables/useCurrency'
 
 const { t } = useI18n()
+const { formatPrice } = useCurrency()
 const route = useRoute()
 const router = useRouter()
 const cart = useCartStore()
@@ -145,7 +147,7 @@ onMounted(() => {
               <h3 class="font-semibold text-gray-900 truncate group-hover:text-indigo-600 transition-colors">{{ product.name }}</h3>
             </RouterLink>
             <div class="flex justify-between items-center mt-3">
-              <span class="text-lg font-bold text-gray-900">${{ product.price }}</span>
+              <span class="text-lg font-bold text-gray-900">{{ formatPrice(product.price) }}</span>
               <button
                 v-if="product.stock > 0"
                 @click="addToCart(product)"
