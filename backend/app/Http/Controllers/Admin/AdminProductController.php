@@ -1,0 +1,111 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class AdminProductController extends Controller
+{
+    public function index(Request $request): JsonResponse
+    {
+        $products = Product::with('category')
+            ->orderByDesc('created_at')
+            ->paginate($request->input('per_page', 15));
+
+        return response()->json([
+            'success' => true,
+            'data' => $products,
+        ]);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'is_active' => ['boolean'],
+        ]);
+
+        $validated['slug'] = Str::slug($validated['name']);
+
+        if ($request->hasFile('image')) {
+            $result = Cloudinary::upload($request->file('image')->getRealPath(), [
+                'folder' => 'techstore/products',
+            ]);
+            $validated['image_url'] = $result->getSecurePath();
+        }
+
+        unset($validated['image']);
+        $product = Product::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product created.',
+            'data' => $product->load('category'),
+        ], 201);
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        $product = Product::with('category')->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $product,
+        ]);
+    }
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+
+        $validated = $request->validate([
+            'category_id' => ['sometimes', 'exists:categories,id'],
+            'name' => ['sometimes', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'price' => ['sometimes', 'numeric', 'min:0'],
+            'stock' => ['sometimes', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'is_active' => ['boolean'],
+        ]);
+
+        if (isset($validated['name'])) {
+            $validated['slug'] = Str::slug($validated['name']);
+        }
+
+        if ($request->hasFile('image')) {
+            $result = Cloudinary::upload($request->file('image')->getRealPath(), [
+                'folder' => 'techstore/products',
+            ]);
+            $validated['image_url'] = $result->getSecurePath();
+        }
+
+        unset($validated['image']);
+        $product->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product updated.',
+            'data' => $product->fresh()->load('category'),
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        Product::findOrFail($id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product deleted.',
+        ]);
+    }
+}
