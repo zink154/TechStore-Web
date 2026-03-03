@@ -1,0 +1,147 @@
+{
+  "app": {
+    "title": "TechStore",
+    "tagline": "Cửa Hàng Công Nghệ Của Bạn"
+  },
+  "nav": {
+    "products": "Sản phẩm",
+    "cart": "Giỏ hàng",
+    "orders": "Đơn hàng",
+    "profile": "Tài khoản",
+    "admin": "Quản trị",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất"
+  },
+  "hero": {
+    "title_1": "Cửa Hàng",
+    "title_2": "Công Nghệ",
+    "subtitle": "Khám phá laptop, điện thoại, máy tính bảng và phụ kiện mới nhất. Chất lượng cao, giá cả cạnh tranh.",
+    "shop_now": "Mua ngay",
+    "browse": "Xem danh mục"
+  },
+  "trust": {
+    "free_shipping": "Miễn phí vận chuyển",
+    "free_shipping_desc": "Đơn hàng trên $50",
+    "secure_payment": "Thanh toán an toàn",
+    "secure_payment_desc": "Bảo mật bởi Stripe",
+    "easy_returns": "Đổi trả dễ dàng",
+    "easy_returns_desc": "Trong vòng 30 ngày",
+    "support": "Hỗ trợ 24/7",
+    "support_desc": "Luôn sẵn sàng hỗ trợ"
+  },
+  "home": {
+    "shop_by_category": "Mua theo danh mục",
+    "category_subtitle": "Tìm đúng thứ bạn cần",
+    "featured": "Sản phẩm nổi bật",
+    "featured_subtitle": "Được yêu thích nhất",
+    "view_all": "Xem tất cả",
+    "view_all_products": "Xem tất cả sản phẩm",
+    "cta_title": "Sẵn sàng nâng cấp công nghệ?",
+    "cta_subtitle": "Tham gia cùng hàng nghìn khách hàng hài lòng. Mua sắm công nghệ mới nhất với sự tin tưởng.",
+    "create_account": "Tạo tài khoản",
+    "items": "sản phẩm"
+  },
+  "products": {
+    "title": "Sản phẩm",
+    "search": "Tìm kiếm",
+    "search_placeholder": "Tìm sản phẩm...",
+    "category": "Danh mục",
+    "all_categories": "Tất cả danh mục",
+    "sort_by": "Sắp xếp",
+    "newest": "Mới nhất",
+    "price": "Giá",
+    "name": "Tên",
+    "filter": "Lọc",
+    "found": "{count} sản phẩm được tìm thấy",
+    "no_products": "Không tìm thấy sản phẩm.",
+    "add_to_cart": "Thêm vào giỏ",
+    "added": "Đã thêm!",
+    "in_stock": "Còn hàng",
+    "out_of_stock": "Hết hàng",
+    "available": "Còn {count}",
+    "no_image": "Chưa có ảnh",
+    "loading": "Đang tải..."
+  },
+  "cart": {
+    "title": "Giỏ hàng",
+    "empty": "Giỏ hàng trống",
+    "continue": "Tiếp tục mua sắm",
+    "each": "mỗi cái",
+    "total": "Tổng ({count} sản phẩm)",
+    "checkout": "Thanh toán"
+  },
+  "auth": {
+    "login_title": "Đăng nhập tài khoản",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "login_btn": "Đăng nhập",
+    "no_account": "Chưa có tài khoản?",
+    "register_link": "Đăng ký ngay",
+    "register_title": "Tạo tài khoản mới",
+    "name": "Họ và tên",
+    "confirm_password": "Xác nhận mật khẩu",
+    "register_btn": "Tạo tài khoản",
+    "have_account": "Đã có tài khoản?",
+    "login_link": "Đăng nhập"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "shipping": "Thông tin giao hàng",
+    "phone": "Số điện thoại",
+    "address": "Địa chỉ giao hàng",
+    "notes": "Ghi chú đơn hàng (tùy chọn)",
+    "notes_placeholder": "Hướng dẫn đặc biệt...",
+    "payment": "Thanh toán",
+    "card": "Thông tin thẻ",
+    "stripe_note": "Stripe chế độ test — dùng thẻ 4242 4242 4242 4242",
+    "stripe_not_configured": "Stripe chưa được cấu hình. Đơn hàng sẽ được đặt mà không xử lý thanh toán.",
+    "summary": "Tóm tắt đơn hàng",
+    "place_order": "Đặt hàng",
+    "placing": "Đang đặt hàng...",
+    "success_title": "Đặt hàng thành công!",
+    "success_msg": "Đơn hàng của bạn đã được đặt thành công.",
+    "view_orders": "Xem đơn hàng"
+  },
+  "orders": {
+    "title": "Lịch sử đơn hàng",
+    "no_orders": "Bạn chưa có đơn hàng nào.",
+    "start_shopping": "Bắt đầu mua sắm",
+    "order_id": "Đơn hàng #{id}",
+    "status": {
+      "pending": "Chờ xử lý",
+      "processing": "Đang xử lý",
+      "shipped": "Đang giao",
+      "delivered": "Đã giao",
+      "cancelled": "Đã hủy"
+    }
+  },
+  "profile": {
+    "title": "Tài khoản của tôi",
+    "name": "Họ tên",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "address": "Địa chỉ",
+    "save": "Lưu thay đổi",
+    "saved": "Đã cập nhật!"
+  },
+  "footer": {
+    "description": "Điểm đến tin cậy cho các sản phẩm công nghệ và phụ kiện mới nhất.",
+    "quick_links": "Liên kết nhanh",
+    "home": "Trang chủ",
+    "support": "Hỗ trợ",
+    "contact": "Liên hệ",
+    "faq": "Câu hỏi thường gặp",
+    "shipping_info": "Thông tin vận chuyển",
+    "rights": "Đã đăng ký bản quyền."
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Đã xảy ra lỗi",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "back": "Quay lại"
+  }
+}

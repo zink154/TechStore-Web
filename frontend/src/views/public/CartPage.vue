@@ -3,7 +3,9 @@ import DefaultLayout from '@/components/layout/DefaultLayout.vue'
 import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const cart = useCartStore()
 const auth = useAuthStore()
 </script>
@@ -11,12 +13,12 @@ const auth = useAuthStore()
 <template>
   <DefaultLayout>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-6">Shopping Cart</h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ t('cart.title') }}</h1>
 
       <div v-if="cart.items.length === 0" class="text-center py-16">
-        <p class="text-gray-500 text-lg mb-4">Your cart is empty</p>
+        <p class="text-gray-500 text-lg mb-4">{{ t('cart.empty') }}</p>
         <RouterLink to="/products" class="text-indigo-600 hover:text-indigo-700 font-medium">
-          Continue Shopping &rarr;
+          {{ t('cart.continue') }} &rarr;
         </RouterLink>
       </div>
 
@@ -26,13 +28,13 @@ const auth = useAuthStore()
             <!-- Image -->
             <div class="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
               <img v-if="item.image_url" :src="item.image_url" :alt="item.name" class="h-full w-full object-cover" />
-              <span v-else class="text-gray-400 text-xs">No Image</span>
+              <span v-else class="text-gray-400 text-xs">{{ t('products.no_image') }}</span>
             </div>
 
             <!-- Info -->
             <div class="flex-1 min-w-0">
               <h3 class="font-medium text-gray-900 truncate">{{ item.name }}</h3>
-              <p class="text-sm text-gray-500">${{ item.price }} each</p>
+              <p class="text-sm text-gray-500">${{ item.price }} {{ t('cart.each') }}</p>
             </div>
 
             <!-- Quantity -->
@@ -57,18 +59,18 @@ const auth = useAuthStore()
         <!-- Summary -->
         <div class="mt-6 bg-white rounded-lg shadow-sm border border-gray-100 p-6">
           <div class="flex justify-between items-center mb-4">
-            <span class="text-lg text-gray-700">Total ({{ cart.count }} items)</span>
+            <span class="text-lg text-gray-700">{{ t('cart.total', { count: cart.count }) }}</span>
             <span class="text-2xl font-bold text-gray-900">${{ cart.total.toFixed(2) }}</span>
           </div>
           <div class="flex gap-4">
             <RouterLink to="/products" class="flex-1 text-center border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50">
-              Continue Shopping
+              {{ t('cart.continue') }}
             </RouterLink>
             <RouterLink
               :to="auth.isAuthenticated ? '/checkout' : '/login?redirect=/checkout'"
               class="flex-1 text-center bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700"
             >
-              Checkout
+              {{ t('cart.checkout') }}
             </RouterLink>
           </div>
         </div>

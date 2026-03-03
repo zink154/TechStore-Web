@@ -1,8 +1,11 @@
 <script setup>
 import DefaultLayout from '@/components/layout/DefaultLayout.vue'
 import { ref, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import api from '@/lib/axios'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const orders = ref([])
 const loading = ref(true)
 
@@ -24,25 +27,25 @@ onMounted(async () => {
 <template>
   <DefaultLayout>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-6">My Orders</h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ t('orders.title') }}</h1>
 
-      <div v-if="loading" class="text-center py-12 text-gray-500">Loading...</div>
+      <div v-if="loading" class="text-center py-12 text-gray-500">{{ t('common.loading') }}</div>
 
       <div v-else-if="orders.length === 0" class="text-center py-16">
-        <p class="text-gray-500 text-lg mb-4">No orders yet</p>
-        <RouterLink to="/products" class="text-indigo-600 hover:text-indigo-700 font-medium">Start Shopping &rarr;</RouterLink>
+        <p class="text-gray-500 text-lg mb-4">{{ t('orders.no_orders') }}</p>
+        <RouterLink to="/products" class="text-indigo-600 hover:text-indigo-700 font-medium">{{ t('orders.start_shopping') }} &rarr;</RouterLink>
       </div>
 
       <div v-else class="space-y-4">
         <div v-for="order in orders" :key="order.id" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
           <div class="flex flex-wrap justify-between items-start gap-4 mb-4">
             <div>
-              <h3 class="font-semibold text-gray-900">Order #{{ order.id }}</h3>
+              <h3 class="font-semibold text-gray-900">{{ t('orders.order_id', { id: order.id }) }}</h3>
               <p class="text-sm text-gray-500">{{ new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
             </div>
             <div class="flex items-center gap-3">
-              <span :class="[statusColors[order.status], 'px-3 py-1 rounded-full text-xs font-medium capitalize']">
-                {{ order.status }}
+              <span :class="[statusColors[order.status], 'px-3 py-1 rounded-full text-xs font-medium']">
+                {{ t(`orders.status.${order.status}`) }}
               </span>
               <span class="font-bold text-gray-900">${{ order.total }}</span>
             </div>

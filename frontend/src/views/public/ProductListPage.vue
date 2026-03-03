@@ -4,7 +4,9 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useCartStore } from '@/stores/cart'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const cart = useCartStore()
@@ -84,45 +86,45 @@ onMounted(() => {
 <template>
   <DefaultLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-6">Products</h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ t('products.title') }}</h1>
 
       <!-- Filters -->
       <div class="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-end border border-gray-100">
         <div class="flex-1 min-w-[200px]">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('products.search') }}</label>
           <input
             v-model="filters.search"
             type="text"
-            placeholder="Search products..."
+            :placeholder="t('products.search_placeholder')"
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
             @keyup.enter="applyFilters"
           />
         </div>
         <div class="min-w-[150px]">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('products.category') }}</label>
           <select v-model="filters.category" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" @change="applyFilters">
-            <option value="">All Categories</option>
+            <option value="">{{ t('products.all_categories') }}</option>
             <option v-for="cat in categories" :key="cat.id" :value="cat.slug">{{ cat.name }}</option>
           </select>
         </div>
         <div class="min-w-[150px]">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('products.sort_by') }}</label>
           <select v-model="filters.sort" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" @change="applyFilters">
-            <option value="created_at">Newest</option>
-            <option value="price">Price</option>
-            <option value="name">Name</option>
+            <option value="created_at">{{ t('products.newest') }}</option>
+            <option value="price">{{ t('products.price') }}</option>
+            <option value="name">{{ t('products.name') }}</option>
           </select>
         </div>
         <button @click="applyFilters" class="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 cursor-pointer">
-          Filter
+          {{ t('products.filter') }}
         </button>
       </div>
 
       <!-- Results count -->
-      <p class="text-sm text-gray-500 mb-4">{{ pagination.total ?? 0 }} products found</p>
+      <p class="text-sm text-gray-500 mb-4">{{ t('products.found', { count: pagination.total ?? 0 }) }}</p>
 
       <!-- Loading -->
-      <div v-if="loading" class="text-center py-12 text-gray-500">Loading...</div>
+      <div v-if="loading" class="text-center py-12 text-gray-500">{{ t('products.loading') }}</div>
 
       <!-- Products Grid -->
       <div v-else-if="products.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -134,7 +136,7 @@ onMounted(() => {
           <RouterLink :to="`/products/${product.slug}`">
             <div class="h-48 bg-gray-100 overflow-hidden">
               <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
-              <div v-else class="h-full flex items-center justify-center text-gray-400 text-sm">No Image</div>
+              <div v-else class="h-full flex items-center justify-center text-gray-400 text-sm">{{ t('products.no_image') }}</div>
             </div>
           </RouterLink>
           <div class="p-4">
@@ -149,15 +151,15 @@ onMounted(() => {
                 @click="addToCart(product)"
                 class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-indigo-700 cursor-pointer"
               >
-                Add to Cart
+                {{ t('products.add_to_cart') }}
               </button>
-              <span v-else class="text-xs text-red-500">Out of Stock</span>
+              <span v-else class="text-xs text-red-500">{{ t('products.out_of_stock') }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-else class="text-center py-12 text-gray-500">No products found.</div>
+      <div v-else class="text-center py-12 text-gray-500">{{ t('products.no_products') }}</div>
 
       <!-- Pagination -->
       <div v-if="pagination.last_page > 1" class="flex justify-center mt-8 space-x-2">

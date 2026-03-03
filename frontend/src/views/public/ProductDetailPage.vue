@@ -4,7 +4,9 @@ import { ref, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useCartStore } from '@/stores/cart'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const cart = useCartStore()
 const product = ref(null)
@@ -32,12 +34,12 @@ function addToCart() {
 <template>
   <DefaultLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div v-if="loading" class="text-center py-20 text-gray-500">Loading...</div>
+      <div v-if="loading" class="text-center py-20 text-gray-500">{{ t('products.loading') }}</div>
 
       <template v-else-if="product">
         <!-- Breadcrumb -->
         <nav class="mb-6 text-sm text-gray-500">
-          <RouterLink to="/products" class="hover:text-indigo-600">Products</RouterLink>
+          <RouterLink to="/products" class="hover:text-indigo-600">{{ t('products.title') }}</RouterLink>
           <span class="mx-2">/</span>
           <span class="text-gray-900">{{ product.name }}</span>
         </nav>
@@ -46,7 +48,7 @@ function addToCart() {
           <!-- Image -->
           <div class="bg-white rounded-xl border border-gray-100 h-96 flex items-center justify-center overflow-hidden shadow-sm">
             <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover hover:scale-105 transition-transform duration-300" />
-            <span v-else class="text-gray-400">No Image</span>
+            <span v-else class="text-gray-400">{{ t('products.no_image') }}</span>
           </div>
 
           <!-- Info -->
@@ -57,9 +59,9 @@ function addToCart() {
 
             <div class="mb-6">
               <span v-if="product.stock > 0" class="text-green-600 bg-green-50 px-3 py-1 rounded-full text-sm font-medium">
-                In Stock ({{ product.stock }} available)
+                {{ t('products.in_stock') }} ({{ t('products.available', { count: product.stock }) }})
               </span>
-              <span v-else class="text-red-600 bg-red-50 px-3 py-1 rounded-full text-sm font-medium">Out of Stock</span>
+              <span v-else class="text-red-600 bg-red-50 px-3 py-1 rounded-full text-sm font-medium">{{ t('products.out_of_stock') }}</span>
             </div>
 
             <p class="text-gray-600 mb-6 leading-relaxed">{{ product.description }}</p>
@@ -74,7 +76,7 @@ function addToCart() {
                 @click="addToCart"
                 class="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition cursor-pointer"
               >
-                {{ added ? 'Added!' : 'Add to Cart' }}
+                {{ added ? t('products.added') : t('products.add_to_cart') }}
               </button>
             </div>
           </div>

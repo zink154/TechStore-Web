@@ -4,7 +4,9 @@ import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useCartStore } from '@/stores/cart'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const cart = useCartStore()
 const featuredProducts = ref([])
 const categories = ref([])
@@ -53,19 +55,19 @@ onMounted(async () => {
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
         <div class="max-w-3xl">
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
-            Your One-Stop<br>
-            <span class="text-indigo-200">Tech Store</span>
+            {{ t('hero.title_1') }}<br>
+            <span class="text-indigo-200">{{ t('hero.title_2') }}</span>
           </h1>
           <p class="text-lg sm:text-xl text-indigo-100 mb-10 max-w-xl leading-relaxed">
-            Discover the latest laptops, smartphones, tablets and accessories. Premium quality, competitive prices.
+            {{ t('hero.subtitle') }}
           </p>
           <div class="flex flex-wrap gap-4">
             <RouterLink to="/products" class="inline-flex items-center bg-white text-indigo-600 font-semibold px-8 py-3.5 rounded-lg hover:bg-indigo-50 transition shadow-lg">
-              Shop Now
+              {{ t('hero.shop_now') }}
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </RouterLink>
             <RouterLink to="/products" class="inline-flex items-center border-2 border-white/30 text-white font-semibold px-8 py-3.5 rounded-lg hover:bg-white/10 transition">
-              Browse Categories
+              {{ t('hero.browse') }}
             </RouterLink>
           </div>
         </div>
@@ -81,8 +83,8 @@ onMounted(async () => {
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/></svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-gray-900">Free Shipping</p>
-              <p class="text-xs text-gray-500">On orders over $50</p>
+              <p class="text-sm font-semibold text-gray-900">{{ t('trust.free_shipping') }}</p>
+              <p class="text-xs text-gray-500">{{ t('trust.free_shipping_desc') }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -90,8 +92,8 @@ onMounted(async () => {
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-gray-900">Secure Payment</p>
-              <p class="text-xs text-gray-500">Powered by Stripe</p>
+              <p class="text-sm font-semibold text-gray-900">{{ t('trust.secure_payment') }}</p>
+              <p class="text-xs text-gray-500">{{ t('trust.secure_payment_desc') }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -99,8 +101,8 @@ onMounted(async () => {
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"/></svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-gray-900">Easy Returns</p>
-              <p class="text-xs text-gray-500">30-day return policy</p>
+              <p class="text-sm font-semibold text-gray-900">{{ t('trust.easy_returns') }}</p>
+              <p class="text-xs text-gray-500">{{ t('trust.easy_returns_desc') }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -108,8 +110,8 @@ onMounted(async () => {
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-gray-900">24/7 Support</p>
-              <p class="text-xs text-gray-500">Dedicated assistance</p>
+              <p class="text-sm font-semibold text-gray-900">{{ t('trust.support') }}</p>
+              <p class="text-xs text-gray-500">{{ t('trust.support_desc') }}</p>
             </div>
           </div>
         </div>
@@ -119,8 +121,8 @@ onMounted(async () => {
     <!-- Categories -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div class="text-center mb-10">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">Shop by Category</h2>
-        <p class="text-gray-500">Find exactly what you need</p>
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ t('home.shop_by_category') }}</h2>
+        <p class="text-gray-500">{{ t('home.category_subtitle') }}</p>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <RouterLink
@@ -131,7 +133,7 @@ onMounted(async () => {
         >
           <div class="w-14 h-14 mx-auto mb-3 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-100 transition-colors" v-html="categoryIcons[cat.slug] || categoryIcons.accessories"></div>
           <p class="font-semibold text-gray-900 text-sm">{{ cat.name }}</p>
-          <p class="text-xs text-gray-500 mt-1">{{ cat.products_count }} items</p>
+          <p class="text-xs text-gray-500 mt-1">{{ cat.products_count }} {{ t('home.items') }}</p>
         </RouterLink>
       </div>
     </section>
@@ -141,11 +143,11 @@ onMounted(async () => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="flex justify-between items-center mb-10">
           <div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Featured Products</h2>
-            <p class="text-gray-500">Our most popular picks</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ t('home.featured') }}</h2>
+            <p class="text-gray-500">{{ t('home.featured_subtitle') }}</p>
           </div>
           <RouterLink to="/products" class="hidden sm:inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium">
-            View All
+            {{ t('home.view_all') }}
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </RouterLink>
         </div>
@@ -175,7 +177,7 @@ onMounted(async () => {
                   :alt="product.name"
                   class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div v-else class="h-full flex items-center justify-center text-gray-400 text-sm">No Image</div>
+                <div v-else class="h-full flex items-center justify-center text-gray-400 text-sm">{{ t('products.no_image') }}</div>
               </div>
             </RouterLink>
             <div class="p-4">
@@ -196,9 +198,9 @@ onMounted(async () => {
                       : 'bg-indigo-600 text-white hover:bg-indigo-700'
                   ]"
                 >
-                  {{ addedProducts.has(product.id) ? 'Added!' : 'Add to Cart' }}
+                  {{ addedProducts.has(product.id) ? t('products.added') : t('products.add_to_cart') }}
                 </button>
-                <span v-else class="text-xs text-red-500 font-medium">Out of Stock</span>
+                <span v-else class="text-xs text-red-500 font-medium">{{ t('products.out_of_stock') }}</span>
               </div>
             </div>
           </div>
@@ -206,7 +208,7 @@ onMounted(async () => {
 
         <div class="text-center mt-10 sm:hidden">
           <RouterLink to="/products" class="inline-flex items-center text-indigo-600 font-medium">
-            View All Products
+            {{ t('home.view_all_products') }}
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </RouterLink>
         </div>
@@ -216,10 +218,10 @@ onMounted(async () => {
     <!-- CTA -->
     <section class="bg-indigo-600">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">Ready to upgrade your tech?</h2>
-        <p class="text-indigo-100 mb-8 max-w-xl mx-auto">Join thousands of satisfied customers. Shop the latest tech with confidence.</p>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">{{ t('home.cta_title') }}</h2>
+        <p class="text-indigo-100 mb-8 max-w-xl mx-auto">{{ t('home.cta_subtitle') }}</p>
         <RouterLink to="/register" class="inline-flex items-center bg-white text-indigo-600 font-semibold px-8 py-3.5 rounded-lg hover:bg-indigo-50 transition shadow-lg">
-          Create Account
+          {{ t('home.create_account') }}
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
         </RouterLink>
       </div>

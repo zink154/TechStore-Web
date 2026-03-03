@@ -6,7 +6,9 @@ import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'
 import { loadStripe } from '@stripe/stripe-js'
 import api from '@/lib/axios'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const cart = useCartStore()
 const auth = useAuthStore()
@@ -49,12 +51,10 @@ async function handleCheckout() {
   try {
     const items = cart.items.map((i) => ({ product_id: i.id, quantity: i.quantity }))
 
-    // Create payment intent
     const { data: piData } = await api.post('/checkout/payment-intent', { items })
 
     let paymentIntentId = 'demo_payment'
 
-    // Confirm payment with Stripe if available
     if (stripe.value && cardMounted.value) {
       const { error: stripeError, paymentIntent } = await stripe.value.confirmCardPayment(
         piData.data.client_secret,
@@ -68,7 +68,6 @@ async function handleCheckout() {
       paymentIntentId = paymentIntent.id
     }
 
-    // Place order
     await api.post('/checkout', {
       items,
       shipping_address: form.value.shipping_address,
@@ -90,7 +89,7 @@ async function handleCheckout() {
 <template>
   <DefaultLayout>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-6">Checkout</h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ t('checkout.title') }}</h1>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Form -->
@@ -98,38 +97,38 @@ async function handleCheckout() {
           <div v-if="error" class="bg-red-50 text-red-600 text-sm p-3 rounded-lg">{{ error }}</div>
 
           <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900">Shipping Information</h2>
+            <h2 class="text-lg font-semibold text-gray-900">{{ t('checkout.shipping') }}</h2>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Shipping Address</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('checkout.address') }}</label>
               <textarea v-model="form.shipping_address" required rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('checkout.phone') }}</label>
               <input v-model="form.phone" type="tel" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
-              <textarea v-model="form.notes" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('checkout.notes') }}</label>
+              <textarea v-model="form.notes" rows="2" :placeholder="t('checkout.notes_placeholder')" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
             </div>
           </div>
 
           <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ t('checkout.payment') }}</h2>
             <div id="card-element" class="border border-gray-300 rounded-lg p-3"></div>
-            <p v-if="!cardMounted" class="text-sm text-gray-400 mt-2">Stripe sandbox — configure VITE_STRIPE_KEY to enable card input.</p>
+            <p v-if="!cardMounted" class="text-sm text-gray-400 mt-2">{{ t('checkout.stripe_not_configured') }}</p>
           </div>
 
           <button type="submit" :disabled="loading" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 cursor-pointer">
-            {{ loading ? 'Processing...' : `Pay $${cart.total.toFixed(2)}` }}
+            {{ loading ? t('checkout.placing') : `${t('checkout.place_order')} — $${cart.total.toFixed(2)}` }}
           </button>
         </form>
 
         <!-- Order Summary -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 h-fit">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ t('checkout.summary') }}</h2>
           <div class="space-y-3">
             <div v-for="item in cart.items" :key="item.id" class="flex justify-between text-sm">
               <span class="text-gray-600">{{ item.name }} x{{ item.quantity }}</span>

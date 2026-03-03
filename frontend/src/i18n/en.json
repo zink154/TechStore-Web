@@ -1,0 +1,147 @@
+{
+  "app": {
+    "title": "TechStore",
+    "tagline": "Your One-Stop Tech Store"
+  },
+  "nav": {
+    "products": "Products",
+    "cart": "Cart",
+    "orders": "Orders",
+    "profile": "Profile",
+    "admin": "Admin",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "hero": {
+    "title_1": "Your One-Stop",
+    "title_2": "Tech Store",
+    "subtitle": "Discover the latest laptops, smartphones, tablets and accessories. Premium quality, competitive prices.",
+    "shop_now": "Shop Now",
+    "browse": "Browse Categories"
+  },
+  "trust": {
+    "free_shipping": "Free Shipping",
+    "free_shipping_desc": "On orders over $50",
+    "secure_payment": "Secure Payment",
+    "secure_payment_desc": "Powered by Stripe",
+    "easy_returns": "Easy Returns",
+    "easy_returns_desc": "30-day return policy",
+    "support": "24/7 Support",
+    "support_desc": "Dedicated assistance"
+  },
+  "home": {
+    "shop_by_category": "Shop by Category",
+    "category_subtitle": "Find exactly what you need",
+    "featured": "Featured Products",
+    "featured_subtitle": "Our most popular picks",
+    "view_all": "View All",
+    "view_all_products": "View All Products",
+    "cta_title": "Ready to upgrade your tech?",
+    "cta_subtitle": "Join thousands of satisfied customers. Shop the latest tech with confidence.",
+    "create_account": "Create Account",
+    "items": "items"
+  },
+  "products": {
+    "title": "Products",
+    "search": "Search",
+    "search_placeholder": "Search products...",
+    "category": "Category",
+    "all_categories": "All Categories",
+    "sort_by": "Sort by",
+    "newest": "Newest",
+    "price": "Price",
+    "name": "Name",
+    "filter": "Filter",
+    "found": "{count} products found",
+    "no_products": "No products found.",
+    "add_to_cart": "Add to Cart",
+    "added": "Added!",
+    "in_stock": "In Stock",
+    "out_of_stock": "Out of Stock",
+    "available": "{count} available",
+    "no_image": "No Image",
+    "loading": "Loading..."
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "continue": "Continue Shopping",
+    "each": "each",
+    "total": "Total ({count} items)",
+    "checkout": "Checkout"
+  },
+  "auth": {
+    "login_title": "Sign in to your account",
+    "email": "Email",
+    "password": "Password",
+    "login_btn": "Sign In",
+    "no_account": "Don't have an account?",
+    "register_link": "Register here",
+    "register_title": "Create your account",
+    "name": "Full Name",
+    "confirm_password": "Confirm Password",
+    "register_btn": "Create Account",
+    "have_account": "Already have an account?",
+    "login_link": "Sign in"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shipping": "Shipping Information",
+    "phone": "Phone Number",
+    "address": "Shipping Address",
+    "notes": "Order Notes (optional)",
+    "notes_placeholder": "Any special instructions...",
+    "payment": "Payment",
+    "card": "Card Details",
+    "stripe_note": "Stripe test mode — use card 4242 4242 4242 4242",
+    "stripe_not_configured": "Stripe is not configured. Orders will be placed without payment processing.",
+    "summary": "Order Summary",
+    "place_order": "Place Order",
+    "placing": "Placing Order...",
+    "success_title": "Order Placed!",
+    "success_msg": "Your order has been placed successfully.",
+    "view_orders": "View My Orders"
+  },
+  "orders": {
+    "title": "Order History",
+    "no_orders": "You haven't placed any orders yet.",
+    "start_shopping": "Start Shopping",
+    "order_id": "Order #{id}",
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "save": "Save Changes",
+    "saved": "Profile updated!"
+  },
+  "footer": {
+    "description": "Your trusted destination for the latest tech products and accessories.",
+    "quick_links": "Quick Links",
+    "home": "Home",
+    "support": "Support",
+    "contact": "Contact Us",
+    "faq": "FAQ",
+    "shipping_info": "Shipping Info",
+    "rights": "All rights reserved."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back"
+  }
+}
