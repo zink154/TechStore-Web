@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Cloudinary\Cloudinary;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -41,10 +41,11 @@ class AdminProductController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $result = Cloudinary::upload($request->file('image')->getRealPath(), [
+                $cloudinary = new Cloudinary(env('CLOUDINARY_URL'));
+                $result = $cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), [
                     'folder' => 'techstore/products',
                 ]);
-                $validated['image_url'] = $result->getSecurePath();
+                $validated['image_url'] = $result['secure_url'];
             } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
@@ -93,10 +94,11 @@ class AdminProductController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $result = Cloudinary::upload($request->file('image')->getRealPath(), [
+                $cloudinary = new Cloudinary(env('CLOUDINARY_URL'));
+                $result = $cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), [
                     'folder' => 'techstore/products',
                 ]);
-                $validated['image_url'] = $result->getSecurePath();
+                $validated['image_url'] = $result['secure_url'];
             } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
