@@ -77,43 +77,43 @@ onMounted(async () => {
     </section>
 
     <!-- Trust badges -->
-    <section class="bg-white border-b border-gray-100">
+    <section class="bg-white border-b border-gray-100 dark:bg-gray-800 dark:border-gray-700">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/></svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-gray-900">{{ t('trust.free_shipping') }}</p>
-              <p class="text-xs text-gray-500">{{ t('trust.free_shipping_desc') }}</p>
+              <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ t('trust.free_shipping') }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('trust.free_shipping_desc') }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-gray-900">{{ t('trust.secure_payment') }}</p>
-              <p class="text-xs text-gray-500">{{ t('trust.secure_payment_desc') }}</p>
+              <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ t('trust.secure_payment') }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('trust.secure_payment_desc') }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"/></svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-gray-900">{{ t('trust.easy_returns') }}</p>
-              <p class="text-xs text-gray-500">{{ t('trust.easy_returns_desc') }}</p>
+              <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ t('trust.easy_returns') }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('trust.easy_returns_desc') }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-gray-900">{{ t('trust.support') }}</p>
-              <p class="text-xs text-gray-500">{{ t('trust.support_desc') }}</p>
+              <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ t('trust.support') }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('trust.support_desc') }}</p>
             </div>
           </div>
         </div>
@@ -123,44 +123,44 @@ onMounted(async () => {
     <!-- Categories -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div class="text-center mb-10">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ t('home.shop_by_category') }}</h2>
-        <p class="text-gray-500">{{ t('home.category_subtitle') }}</p>
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ t('home.shop_by_category') }}</h2>
+        <p class="text-gray-500 dark:text-gray-400">{{ t('home.category_subtitle') }}</p>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <RouterLink
           v-for="cat in categories"
           :key="cat.id"
           :to="`/products?category=${cat.slug}`"
-          class="group bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-100 hover:border-indigo-200"
+          class="group bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-100 hover:border-indigo-200 dark:bg-gray-800 dark:border-gray-700 dark:hover:border-indigo-500"
         >
-          <div class="w-14 h-14 mx-auto mb-3 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-100 transition-colors" v-html="categoryIcons[cat.slug] || categoryIcons.accessories"></div>
-          <p class="font-semibold text-gray-900 text-sm">{{ cat.name }}</p>
-          <p class="text-xs text-gray-500 mt-1">{{ cat.products_count }} {{ t('home.items') }}</p>
+          <div class="w-14 h-14 mx-auto mb-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 transition-colors" v-html="categoryIcons[cat.slug] || categoryIcons.accessories"></div>
+          <p class="font-semibold text-gray-900 dark:text-gray-100 text-sm">{{ cat.name }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ cat.products_count }} {{ t('home.items') }}</p>
         </RouterLink>
       </div>
     </section>
 
     <!-- Featured Products -->
-    <section class="bg-gray-50">
+    <section class="bg-gray-50 dark:bg-gray-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="flex justify-between items-center mb-10">
           <div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ t('home.featured') }}</h2>
-            <p class="text-gray-500">{{ t('home.featured_subtitle') }}</p>
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ t('home.featured') }}</h2>
+            <p class="text-gray-500 dark:text-gray-400">{{ t('home.featured_subtitle') }}</p>
           </div>
-          <RouterLink to="/products" class="hidden sm:inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium">
+          <RouterLink to="/products" class="hidden sm:inline-flex items-center text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">
             {{ t('home.view_all') }}
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </RouterLink>
         </div>
 
         <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="n in 8" :key="n" class="bg-white rounded-xl overflow-hidden border border-gray-100 animate-pulse">
-            <div class="h-52 bg-gray-200"></div>
+          <div v-for="n in 8" :key="n" class="bg-white rounded-xl overflow-hidden border border-gray-100 dark:bg-gray-800 dark:border-gray-700 animate-pulse">
+            <div class="h-52 bg-gray-200 dark:bg-gray-600"></div>
             <div class="p-4 space-y-3">
-              <div class="h-3 bg-gray-200 rounded w-16"></div>
-              <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div class="h-5 bg-gray-200 rounded w-20"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-16"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div>
+              <div class="h-5 bg-gray-200 dark:bg-gray-600 rounded w-20"></div>
             </div>
           </div>
         </div>
@@ -169,27 +169,27 @@ onMounted(async () => {
           <div
             v-for="product in featuredProducts"
             :key="product.id"
-            class="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden border border-gray-100"
+            class="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden border border-gray-100 dark:bg-gray-800 dark:border-gray-700"
           >
             <RouterLink :to="`/products/${product.slug}`" class="block">
-              <div class="h-52 bg-gray-100 overflow-hidden">
+              <div class="h-52 bg-gray-100 dark:bg-gray-700 overflow-hidden">
                 <img
                   v-if="product.image_url"
                   :src="product.image_url"
                   :alt="product.name"
                   class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div v-else class="h-full flex items-center justify-center text-gray-400 text-sm">{{ t('products.no_image') }}</div>
+                <div v-else class="h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">{{ t('products.no_image') }}</div>
               </div>
             </RouterLink>
             <div class="p-4">
-              <p class="text-xs text-indigo-600 font-medium mb-1">{{ product.category?.name }}</p>
+              <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium mb-1">{{ product.category?.name }}</p>
               <RouterLink :to="`/products/${product.slug}`">
-                <h3 class="font-semibold text-gray-900 truncate group-hover:text-indigo-600 transition-colors">{{ product.name }}</h3>
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ product.name }}</h3>
               </RouterLink>
-              <p class="text-xs text-gray-500 mt-1 line-clamp-1">{{ product.description }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{{ product.description }}</p>
               <div class="flex justify-between items-center mt-3">
-                <span class="text-lg font-bold text-gray-900">{{ formatPrice(product.price) }}</span>
+                <span class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ formatPrice(product.price) }}</span>
                 <button
                   v-if="product.stock > 0"
                   @click="addToCart(product)"
@@ -202,14 +202,14 @@ onMounted(async () => {
                 >
                   {{ addedProducts.has(product.id) ? t('products.added') : t('products.add_to_cart') }}
                 </button>
-                <span v-else class="text-xs text-red-500 font-medium">{{ t('products.out_of_stock') }}</span>
+                <span v-else class="text-xs text-red-500 dark:text-red-400 font-medium">{{ t('products.out_of_stock') }}</span>
               </div>
             </div>
           </div>
         </div>
 
         <div class="text-center mt-10 sm:hidden">
-          <RouterLink to="/products" class="inline-flex items-center text-indigo-600 font-medium">
+          <RouterLink to="/products" class="inline-flex items-center text-indigo-600 dark:text-indigo-400 font-medium">
             {{ t('home.view_all_products') }}
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </RouterLink>

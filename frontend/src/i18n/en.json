@@ -11,7 +11,9 @@
     "admin": "Admin",
     "login": "Login",
     "register": "Register",
-    "logout": "Logout"
+    "logout": "Logout",
+    "dark_mode": "Dark mode",
+    "light_mode": "Light mode"
   },
   "hero": {
     "title_1": "Your One-Stop",

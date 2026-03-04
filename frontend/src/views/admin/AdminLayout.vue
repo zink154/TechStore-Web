@@ -13,7 +13,7 @@ const navItems = [
 </script>
 
 <template>
-  <div class="min-h-screen flex bg-gray-50">
+  <div class="min-h-screen flex bg-gray-50 dark:bg-gray-950">
     <!-- Sidebar -->
     <aside class="w-64 bg-gray-900 text-white flex-shrink-0 hidden lg:block">
       <div class="p-6">

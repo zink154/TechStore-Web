@@ -11,7 +11,9 @@
     "admin": "Quản trị",
     "login": "Đăng nhập",
     "register": "Đăng ký",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "dark_mode": "Chế độ tối",
+    "light_mode": "Chế độ sáng"
   },
   "hero": {
     "title_1": "Cửa Hàng",

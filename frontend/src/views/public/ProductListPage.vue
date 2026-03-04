@@ -88,30 +88,30 @@ onMounted(() => {
 <template>
   <DefaultLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ t('products.title') }}</h1>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">{{ t('products.title') }}</h1>
 
       <!-- Filters -->
-      <div class="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-end border border-gray-100">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-end border border-gray-100 dark:border-gray-700">
         <div class="flex-1 min-w-[200px]">
-          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('products.search') }}</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('products.search') }}</label>
           <input
             v-model="filters.search"
             type="text"
             :placeholder="t('products.search_placeholder')"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
             @keyup.enter="applyFilters"
           />
         </div>
         <div class="min-w-[150px]">
-          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('products.category') }}</label>
-          <select v-model="filters.category" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" @change="applyFilters">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('products.category') }}</label>
+          <select v-model="filters.category" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" @change="applyFilters">
             <option value="">{{ t('products.all_categories') }}</option>
             <option v-for="cat in categories" :key="cat.id" :value="cat.slug">{{ cat.name }}</option>
           </select>
         </div>
         <div class="min-w-[150px]">
-          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('products.sort_by') }}</label>
-          <select v-model="filters.sort" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" @change="applyFilters">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('products.sort_by') }}</label>
+          <select v-model="filters.sort" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" @change="applyFilters">
             <option value="created_at">{{ t('products.newest') }}</option>
             <option value="price">{{ t('products.price') }}</option>
             <option value="name">{{ t('products.name') }}</option>
@@ -123,31 +123,31 @@ onMounted(() => {
       </div>
 
       <!-- Results count -->
-      <p class="text-sm text-gray-500 mb-4">{{ t('products.found', { count: pagination.total ?? 0 }) }}</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ t('products.found', { count: pagination.total ?? 0 }) }}</p>
 
       <!-- Loading -->
-      <div v-if="loading" class="text-center py-12 text-gray-500">{{ t('products.loading') }}</div>
+      <div v-if="loading" class="text-center py-12 text-gray-500 dark:text-gray-400">{{ t('products.loading') }}</div>
 
       <!-- Products Grid -->
       <div v-else-if="products.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <div
           v-for="product in products"
           :key="product.id"
-          class="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden border border-gray-100"
+          class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden border border-gray-100 dark:border-gray-700"
         >
           <RouterLink :to="`/products/${product.slug}`">
-            <div class="h-48 bg-gray-100 overflow-hidden">
+            <div class="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
               <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
-              <div v-else class="h-full flex items-center justify-center text-gray-400 text-sm">{{ t('products.no_image') }}</div>
+              <div v-else class="h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">{{ t('products.no_image') }}</div>
             </div>
           </RouterLink>
           <div class="p-4">
-            <p class="text-xs text-indigo-600 font-medium mb-1">{{ product.category?.name }}</p>
+            <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium mb-1">{{ product.category?.name }}</p>
             <RouterLink :to="`/products/${product.slug}`">
-              <h3 class="font-semibold text-gray-900 truncate group-hover:text-indigo-600 transition-colors">{{ product.name }}</h3>
+              <h3 class="font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ product.name }}</h3>
             </RouterLink>
             <div class="flex justify-between items-center mt-3">
-              <span class="text-lg font-bold text-gray-900">{{ formatPrice(product.price) }}</span>
+              <span class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ formatPrice(product.price) }}</span>
               <button
                 v-if="product.stock > 0"
                 @click="addToCart(product)"
@@ -155,13 +155,13 @@ onMounted(() => {
               >
                 {{ t('products.add_to_cart') }}
               </button>
-              <span v-else class="text-xs text-red-500">{{ t('products.out_of_stock') }}</span>
+              <span v-else class="text-xs text-red-500 dark:text-red-400">{{ t('products.out_of_stock') }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-else class="text-center py-12 text-gray-500">{{ t('products.no_products') }}</div>
+      <div v-else class="text-center py-12 text-gray-500 dark:text-gray-400">{{ t('products.no_products') }}</div>
 
       <!-- Pagination -->
       <div v-if="pagination.last_page > 1" class="flex justify-center mt-8 space-x-2">
@@ -173,7 +173,7 @@ onMounted(() => {
             'px-3 py-1 rounded text-sm cursor-pointer',
             page === pagination.current_page
               ? 'bg-indigo-600 text-white'
-              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
           ]"
         >
           {{ page }}

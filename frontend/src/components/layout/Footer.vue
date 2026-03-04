@@ -6,7 +6,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <footer class="bg-gray-900 text-gray-400 mt-auto">
+  <footer class="bg-gray-900 dark:bg-gray-950 text-gray-400 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
@@ -27,7 +27,7 @@ const { t } = useI18n()
           <p class="text-sm mt-1">This is a demo project.</p>
         </div>
       </div>
-      <div class="border-t border-gray-800 mt-8 pt-6 text-center text-sm">
+      <div class="border-t border-gray-800 dark:border-gray-700 mt-8 pt-6 text-center text-sm">
         &copy; {{ new Date().getFullYear() }} TechStore. {{ t('footer.rights') }}
       </div>
     </div>
