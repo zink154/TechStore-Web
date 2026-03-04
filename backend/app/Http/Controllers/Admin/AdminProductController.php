@@ -101,6 +101,18 @@ class AdminProductController extends Controller
         ]);
     }
 
+    public function toggleFeatured(int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+        $product->update(['is_featured' => !$product->is_featured]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $product->is_featured ? 'Product featured.' : 'Product unfeatured.',
+            'data' => $product->fresh()->load('category'),
+        ]);
+    }
+
     public function destroy(int $id): JsonResponse
     {
         Product::findOrFail($id)->delete();

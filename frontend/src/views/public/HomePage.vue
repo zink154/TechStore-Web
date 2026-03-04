@@ -29,6 +29,7 @@ const categoryIcons = {
   gaming: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 0 1-.657.643 48.39 48.39 0 0 1-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 0 1-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 0 0-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 0 1-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 0 0 .657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 0 1-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 0 0 5.427-.63 48.05 48.05 0 0 0 .582-4.717.532.532 0 0 0-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.959.401v0a.656.656 0 0 0 .658-.663 48.422 48.422 0 0 0-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 0 1-.61-.58v0Z"/></svg>`,
 }
 
+const heroProducts = ref([])
 const addedProducts = ref(new Set())
 
 function addToCart(product) {
@@ -46,12 +47,15 @@ async function loadData() {
   loading.value = true
   loadError.value = false
   try {
-    const [productsRes, categoriesRes] = await Promise.all([
+    const [productsRes, categoriesRes, heroRes] = await Promise.all([
       api.get('/products', { params: { per_page: 8 } }),
       api.get('/categories'),
+      api.get('/products', { params: { featured: true, per_page: 3 } }),
     ])
     featuredProducts.value = productsRes.data.data.data
     categories.value = categoriesRes.data.data
+    const featured = heroRes.data.data.data
+    heroProducts.value = featured.length ? featured : productsRes.data.data.data.slice(0, 3)
   } catch {
     loadError.value = true
     toast.error(t('toast.load_error'))
@@ -71,23 +75,62 @@ onMounted(loadData)
         <div class="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full"></div>
         <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-white rounded-full"></div>
       </div>
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
-        <div class="max-w-3xl">
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
-            {{ t('hero.title_1') }}<br>
-            <span class="text-indigo-200">{{ t('hero.title_2') }}</span>
-          </h1>
-          <p class="text-lg sm:text-xl text-indigo-100 mb-10 max-w-xl leading-relaxed">
-            {{ t('hero.subtitle') }}
-          </p>
-          <div class="flex flex-wrap gap-4">
-            <RouterLink to="/products" class="inline-flex items-center bg-white text-indigo-600 font-semibold px-8 py-3.5 rounded-lg hover:bg-indigo-50 transition shadow-lg">
-              {{ t('hero.shop_now') }}
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </RouterLink>
-            <RouterLink to="/products" class="inline-flex items-center border-2 border-white/30 text-white font-semibold px-8 py-3.5 rounded-lg hover:bg-white/10 transition">
-              {{ t('hero.browse') }}
-            </RouterLink>
+      <!-- Diagonal divider -->
+      <div class="hidden lg:block absolute inset-y-0 left-[45%] w-24 z-10">
+        <div class="h-full w-full" style="background: linear-gradient(160deg, transparent 45%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0.08) 55%, transparent 55%)"></div>
+      </div>
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div class="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+          <!-- Left: Text -->
+          <div>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
+              {{ t('hero.title_1') }}<br>
+              <span class="text-indigo-200">{{ t('hero.title_2') }}</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-indigo-100 mb-10 max-w-xl leading-relaxed">
+              {{ t('hero.subtitle') }}
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <RouterLink to="/products" class="inline-flex items-center bg-white text-indigo-600 font-semibold px-8 py-3.5 rounded-lg hover:bg-indigo-50 transition shadow-lg">
+                {{ t('hero.shop_now') }}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </RouterLink>
+              <RouterLink to="/products" class="inline-flex items-center border-2 border-white/30 text-white font-semibold px-8 py-3.5 rounded-lg hover:bg-white/10 transition">
+                {{ t('hero.browse') }}
+              </RouterLink>
+            </div>
+          </div>
+          <!-- Right: Featured product cards -->
+          <div class="mt-12 lg:mt-0" v-if="heroProducts.length">
+            <div class="grid grid-cols-2 gap-4">
+              <RouterLink
+                v-for="(product, i) in heroProducts"
+                :key="product.id"
+                :to="`/products/${product.slug}`"
+                :class="[
+                  'group relative bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105',
+                  i === 0 ? 'col-span-2' : ''
+                ]"
+              >
+                <div :class="i === 0 ? 'h-40' : 'h-32'" class="overflow-hidden">
+                  <img
+                    v-if="product.image_url"
+                    :src="product.image_url"
+                    :alt="product.name"
+                    loading="lazy"
+                    class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div v-else class="h-full flex items-center justify-center text-white/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z"/></svg>
+                  </div>
+                </div>
+                <div class="p-3">
+                  <p class="text-xs text-indigo-200 font-medium">{{ product.category?.name }}</p>
+                  <h3 class="font-semibold text-white text-sm truncate">{{ product.name }}</h3>
+                  <p class="text-indigo-100 font-bold text-sm mt-1">{{ formatPrice(product.price) }}</p>
+                </div>
+              </RouterLink>
+            </div>
           </div>
         </div>
       </div>

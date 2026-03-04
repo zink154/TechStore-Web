@@ -86,6 +86,16 @@ async function handleSubmit() {
   }
 }
 
+async function toggleFeatured(product) {
+  try {
+    const { data } = await api.patch(`/admin/products/${product.id}/featured`)
+    product.is_featured = data.data.is_featured
+    toast.success(data.data.is_featured ? 'Product featured!' : 'Product unfeatured.')
+  } catch {
+    toast.error('Failed to update featured status.')
+  }
+}
+
 async function deleteProduct(id) {
   if (!confirm('Delete this product?')) return
   try {
@@ -118,6 +128,7 @@ async function deleteProduct(id) {
             <th class="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Price</th>
             <th class="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Stock</th>
             <th class="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Status</th>
+            <th class="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center">Featured</th>
             <th class="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Actions</th>
           </tr>
         </thead>
@@ -138,6 +149,16 @@ async function deleteProduct(id) {
               <span :class="product.is_active ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'" class="text-xs font-medium">
                 {{ product.is_active ? 'Active' : 'Inactive' }}
               </span>
+            </td>
+            <td class="px-4 py-3 text-center">
+              <button
+                @click="toggleFeatured(product)"
+                :aria-label="product.is_featured ? 'Remove from featured' : 'Add to featured'"
+                class="cursor-pointer text-lg transition hover:scale-110"
+                :class="product.is_featured ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600 hover:text-yellow-400'"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" :fill="product.is_featured ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 inline"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/></svg>
+              </button>
             </td>
             <td class="px-4 py-3">
               <button @click="openEdit(product)" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs mr-3 cursor-pointer">Edit</button>

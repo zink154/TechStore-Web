@@ -20,6 +20,10 @@ class ProductController extends Controller
 
         $query = Product::with('category')->where('is_active', true);
 
+        if ($request->boolean('featured')) {
+            $query->where('is_featured', true);
+        }
+
         if ($request->filled('category')) {
             $query->whereHas('category', fn ($q) => $q->where('slug', $request->category));
         }

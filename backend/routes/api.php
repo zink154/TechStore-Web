@@ -40,6 +40,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     Route::apiResource('/products', AdminProductController::class);
+    Route::patch('/products/{id}/featured', [AdminProductController::class, 'toggleFeatured']);
     Route::apiResource('/categories', AdminCategoryController::class)->except(['show']);
 
     Route::get('/orders', [AdminOrderController::class, 'index']);
