@@ -63,7 +63,8 @@
     "out_of_stock": "Hết hàng",
     "available": "Còn {count}",
     "no_image": "Chưa có ảnh",
-    "loading": "Đang tải..."
+    "loading": "Đang tải...",
+    "clear_filters": "Xóa bộ lọc"
   },
   "cart": {
     "title": "Giỏ hàng",
@@ -137,6 +138,22 @@
     "shipping_info": "Thông tin vận chuyển",
     "rights": "Đã đăng ký bản quyền."
   },
+  "toast": {
+    "added_to_cart": "Đã thêm vào giỏ hàng!",
+    "removed_from_cart": "Đã xóa khỏi giỏ hàng",
+    "profile_updated": "Đã cập nhật hồ sơ!",
+    "order_placed": "Đặt hàng thành công!",
+    "product_saved": "Đã lưu sản phẩm!",
+    "product_deleted": "Đã xóa sản phẩm!",
+    "category_saved": "Đã lưu danh mục!",
+    "category_deleted": "Đã xóa danh mục!",
+    "status_updated": "Đã cập nhật trạng thái!",
+    "login_success": "Chào mừng trở lại!",
+    "register_success": "Tạo tài khoản thành công!",
+    "logout_success": "Đã đăng xuất",
+    "load_error": "Không tải được dữ liệu. Vui lòng thử lại.",
+    "confirm_delete": "Bạn có chắc muốn xóa không?"
+  },
   "common": {
     "loading": "Đang tải...",
     "error": "Đã xảy ra lỗi",
@@ -144,6 +161,7 @@
     "cancel": "Hủy",
     "delete": "Xóa",
     "edit": "Sửa",
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "retry": "Thử lại"
   }
 }

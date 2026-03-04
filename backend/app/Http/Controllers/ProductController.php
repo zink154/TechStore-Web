@@ -10,6 +10,14 @@ class ProductController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'min_price' => ['nullable', 'numeric', 'min:0'],
+            'max_price' => ['nullable', 'numeric', 'min:0'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $perPage = min((int) $request->input('per_page', 12), 100);
+
         $query = Product::with('category')->where('is_active', true);
 
         if ($request->filled('category')) {
@@ -40,7 +48,7 @@ class ProductController extends Controller
             $query->orderBy($sortField, $sortDir === 'asc' ? 'asc' : 'desc');
         }
 
-        $products = $query->paginate($request->input('per_page', 12));
+        $products = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,

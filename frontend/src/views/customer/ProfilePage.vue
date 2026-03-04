@@ -4,8 +4,10 @@ import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/lib/axios'
 import { useI18n } from 'vue-i18n'
+import { useToast } from '@/composables/useToast'
 
 const { t } = useI18n()
+const toast = useToast()
 const auth = useAuthStore()
 
 const form = ref({
@@ -24,6 +26,7 @@ async function handleSubmit() {
   try {
     const { data } = await api.put('/auth/profile', form.value)
     auth.user = data.data
+    toast.success(t('toast.profile_updated'))
     success.value = t('profile.saved')
   } catch (e) {
     error.value = e.response?.data?.message ?? t('common.error')

@@ -2,11 +2,14 @@
 import { ref, onMounted } from 'vue'
 import api from '@/lib/axios'
 import { useCurrency } from '@/composables/useCurrency'
+import { useToast } from '@/composables/useToast'
 
 const { formatPrice } = useCurrency()
+const toast = useToast()
 
 const stats = ref(null)
 const loading = ref(true)
+const loadError = ref(false)
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300',
@@ -16,11 +19,21 @@ const statusColors = {
   cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
 }
 
-onMounted(async () => {
-  const { data } = await api.get('/admin/dashboard')
-  stats.value = data.data
-  loading.value = false
-})
+async function loadDashboard() {
+  loading.value = true
+  loadError.value = false
+  try {
+    const { data } = await api.get('/admin/dashboard')
+    stats.value = data.data
+  } catch {
+    loadError.value = true
+    toast.error('Failed to load dashboard data.')
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(loadDashboard)
 </script>
 
 <template>

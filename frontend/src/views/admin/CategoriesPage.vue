@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '@/lib/axios'
+import { useToast } from '@/composables/useToast'
 
+const toast = useToast()
 const categories = ref([])
 const loading = ref(true)
 const showModal = ref(false)
@@ -13,9 +15,14 @@ onMounted(() => fetchCategories())
 
 async function fetchCategories() {
   loading.value = true
-  const { data } = await api.get('/admin/categories')
-  categories.value = data.data
-  loading.value = false
+  try {
+    const { data } = await api.get('/admin/categories')
+    categories.value = data.data
+  } catch {
+    toast.error('Failed to load categories.')
+  } finally {
+    loading.value = false
+  }
 }
 
 function openCreate() {
@@ -40,6 +47,7 @@ async function handleSubmit() {
     } else {
       await api.post('/admin/categories', form.value)
     }
+    toast.success('Category saved!')
     showModal.value = false
     await fetchCategories()
   } catch (e) {
@@ -51,9 +59,10 @@ async function deleteCategory(id) {
   if (!confirm('Delete this category?')) return
   try {
     await api.delete(`/admin/categories/${id}`)
+    toast.success('Category deleted!')
     await fetchCategories()
   } catch (e) {
-    alert(e.response?.data?.message ?? 'Cannot delete.')
+    toast.error(e.response?.data?.message ?? 'Cannot delete.')
   }
 }
 </script>
@@ -94,8 +103,8 @@ async function deleteCategory(id) {
     </div>
 
     <!-- Modal -->
-    <div v-if="showModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-lg dark:bg-gray-800 w-full max-w-sm p-6">
+    <div v-if="showModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" @click.self="showModal = false" @keydown.escape="showModal = false">
+      <div class="bg-white rounded-lg dark:bg-gray-800 w-full max-w-sm p-6" role="dialog" aria-modal="true">
         <h2 class="text-lg font-semibold dark:text-gray-100 mb-4">{{ editing ? 'Edit Category' : 'Add Category' }}</h2>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">

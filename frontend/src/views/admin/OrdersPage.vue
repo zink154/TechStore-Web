@@ -2,8 +2,10 @@
 import { ref, onMounted } from 'vue'
 import api from '@/lib/axios'
 import { useCurrency } from '@/composables/useCurrency'
+import { useToast } from '@/composables/useToast'
 
 const { formatPrice } = useCurrency()
+const toast = useToast()
 
 const orders = ref([])
 const loading = ref(true)
@@ -23,16 +25,26 @@ onMounted(() => fetchOrders())
 
 async function fetchOrders() {
   loading.value = true
-  const params = {}
-  if (filterStatus.value) params.status = filterStatus.value
-  const { data } = await api.get('/admin/orders', { params })
-  orders.value = data.data.data
-  loading.value = false
+  try {
+    const params = {}
+    if (filterStatus.value) params.status = filterStatus.value
+    const { data } = await api.get('/admin/orders', { params })
+    orders.value = data.data.data
+  } catch {
+    toast.error('Failed to load orders.')
+  } finally {
+    loading.value = false
+  }
 }
 
 async function updateStatus(orderId, newStatus) {
-  await api.patch(`/admin/orders/${orderId}/status`, { status: newStatus })
-  await fetchOrders()
+  try {
+    await api.patch(`/admin/orders/${orderId}/status`, { status: newStatus })
+    toast.success('Order status updated!')
+    await fetchOrders()
+  } catch (e) {
+    toast.error(e.response?.data?.message ?? 'Failed to update status.')
+  }
 }
 </script>
 

@@ -13,9 +13,11 @@ class AdminProductController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $perPage = min((int) $request->input('per_page', 15), 100);
+
         $products = Product::with('category')
             ->orderByDesc('created_at')
-            ->paginate($request->input('per_page', 15));
+            ->paginate($perPage);
 
         return response()->json([
             'success' => true,

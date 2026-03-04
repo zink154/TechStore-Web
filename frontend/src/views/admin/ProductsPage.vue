@@ -2,8 +2,10 @@
 import { ref, onMounted } from 'vue'
 import api from '@/lib/axios'
 import { useCurrency } from '@/composables/useCurrency'
+import { useToast } from '@/composables/useToast'
 
 const { formatPrice } = useCurrency()
+const toast = useToast()
 
 const products = ref([])
 const categories = ref([])
@@ -21,9 +23,14 @@ onMounted(async () => {
 
 async function fetchProducts() {
   loading.value = true
-  const { data } = await api.get('/admin/products')
-  products.value = data.data.data
-  loading.value = false
+  try {
+    const { data } = await api.get('/admin/products')
+    products.value = data.data.data
+  } catch {
+    toast.error('Failed to load products.')
+  } finally {
+    loading.value = false
+  }
 }
 
 function openCreate() {
@@ -60,25 +67,34 @@ async function handleSubmit() {
   fd.append('is_active', form.value.is_active ? '1' : '0')
   if (form.value.image) fd.append('image', form.value.image)
 
-  if (editing.value) {
-    fd.append('_method', 'PUT')
-    await api.post(`/admin/products/${editing.value}`, fd, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
-  } else {
-    await api.post('/admin/products', fd, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
+  try {
+    if (editing.value) {
+      fd.append('_method', 'PUT')
+      await api.post(`/admin/products/${editing.value}`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+    } else {
+      await api.post('/admin/products', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+    }
+    toast.success('Product saved!')
+    showModal.value = false
+    await fetchProducts()
+  } catch (e) {
+    toast.error(e.response?.data?.message ?? 'Failed to save product.')
   }
-
-  showModal.value = false
-  await fetchProducts()
 }
 
 async function deleteProduct(id) {
   if (!confirm('Delete this product?')) return
-  await api.delete(`/admin/products/${id}`)
-  await fetchProducts()
+  try {
+    await api.delete(`/admin/products/${id}`)
+    toast.success('Product deleted!')
+    await fetchProducts()
+  } catch (e) {
+    toast.error(e.response?.data?.message ?? 'Failed to delete product.')
+  }
 }
 </script>
 
@@ -110,7 +126,7 @@ async function deleteProduct(id) {
             <td class="px-4 py-3">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded flex-shrink-0 overflow-hidden">
-                  <img v-if="product.image_url" :src="product.image_url" class="w-full h-full object-cover" />
+                  <img v-if="product.image_url" :src="product.image_url" :alt="product.name" loading="lazy" class="w-full h-full object-cover" />
                 </div>
                 <span class="font-medium text-gray-900 dark:text-gray-100">{{ product.name }}</span>
               </div>
@@ -133,8 +149,8 @@ async function deleteProduct(id) {
     </div>
 
     <!-- Modal -->
-    <div v-if="showModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-lg dark:bg-gray-800 w-full max-w-lg p-6">
+    <div v-if="showModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" @click.self="showModal = false" @keydown.escape="showModal = false">
+      <div class="bg-white rounded-lg dark:bg-gray-800 w-full max-w-lg p-6" role="dialog" aria-modal="true">
         <h2 class="text-lg font-semibold dark:text-gray-100 mb-4">{{ editing ? 'Edit Product' : 'Add Product' }}</h2>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">

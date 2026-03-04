@@ -48,7 +48,7 @@ class AdminOrderController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Order status updated.',
-            'data' => $order->fresh()->load(['user', 'items']),
+            'data' => $order->fresh()->load(['user', 'items.product']),
         ]);
     }
 }

@@ -5,8 +5,10 @@ import { useCartStore } from '@/stores/cart'
 import { useThemeStore } from '@/stores/theme'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from '@/composables/useToast'
 
 const { t, locale } = useI18n()
+const toast = useToast()
 const auth = useAuthStore()
 const cart = useCartStore()
 const themeStore = useThemeStore()
@@ -19,7 +21,10 @@ function toggleLocale() {
 }
 
 async function handleLogout() {
-  await auth.logout()
+  try {
+    await auth.logout()
+  } catch { /* ignore */ }
+  toast.info(t('toast.logout_success'))
   mobileOpen.value = false
 }
 </script>
@@ -46,6 +51,7 @@ async function handleLogout() {
           <button
             @click="themeStore.toggleTheme()"
             class="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition"
+            :aria-label="themeStore.isDark ? t('nav.light_mode') : t('nav.dark_mode')"
             :title="themeStore.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
           >
             <svg v-if="themeStore.isDark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,7 +71,7 @@ async function handleLogout() {
             {{ locale === 'en' ? 'VI' : 'EN' }}
           </button>
 
-          <RouterLink to="/cart" class="relative text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 p-2">
+          <RouterLink to="/cart" :aria-label="t('nav.cart')" class="relative text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 p-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
@@ -117,7 +123,7 @@ async function handleLogout() {
           >
             {{ locale === 'en' ? 'VI' : 'EN' }}
           </button>
-          <RouterLink to="/cart" class="relative text-gray-700 dark:text-gray-200 p-2">
+          <RouterLink to="/cart" :aria-label="t('nav.cart')" class="relative text-gray-700 dark:text-gray-200 p-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
@@ -125,7 +131,7 @@ async function handleLogout() {
               {{ cart.count }}
             </span>
           </RouterLink>
-          <button @click="mobileOpen = !mobileOpen" class="text-gray-700 dark:text-gray-200 p-2 cursor-pointer">
+          <button @click="mobileOpen = !mobileOpen" aria-label="Open menu" class="text-gray-700 dark:text-gray-200 p-2 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -135,7 +141,7 @@ async function handleLogout() {
     </div>
 
     <!-- Mobile menu -->
-    <div v-if="mobileOpen" class="sm:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+    <div v-if="mobileOpen" role="menu" class="sm:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
       <div class="px-4 py-3 space-y-2">
         <RouterLink to="/products" @click="mobileOpen = false" class="block text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 py-2">{{ t('nav.products') }}</RouterLink>
         <template v-if="auth.isAuthenticated">

@@ -8,9 +8,11 @@ import { loadStripe } from '@stripe/stripe-js'
 import api from '@/lib/axios'
 import { useI18n } from 'vue-i18n'
 import { useCurrency } from '@/composables/useCurrency'
+import { useToast } from '@/composables/useToast'
 
 const { t } = useI18n()
 const { formatPrice } = useCurrency()
+const toast = useToast()
 const router = useRouter()
 const cart = useCartStore()
 const auth = useAuthStore()
@@ -79,6 +81,7 @@ async function handleCheckout() {
     })
 
     cart.clearCart()
+    toast.success(t('toast.order_placed'))
     router.push('/orders')
   } catch (e) {
     error.value = e.response?.data?.message ?? 'Checkout failed.'

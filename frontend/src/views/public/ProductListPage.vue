@@ -1,17 +1,26 @@
 <script setup>
 import DefaultLayout from '@/components/layout/DefaultLayout.vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useCartStore } from '@/stores/cart'
 import { useI18n } from 'vue-i18n'
 import { useCurrency } from '@/composables/useCurrency'
+import { useToast } from '@/composables/useToast'
+import { useDebounce } from '@/composables/useDebounce'
+import { useMeta } from '@/composables/useMeta'
 
 const { t } = useI18n()
 const { formatPrice } = useCurrency()
+const toast = useToast()
 const route = useRoute()
 const router = useRouter()
 const cart = useCartStore()
+const loadError = ref(false)
+const searchInput = ref(route.query.search ?? '')
+const debouncedSearch = useDebounce(searchInput, 400)
+
+useMeta(computed(() => t('products.title')))
 
 const products = ref([])
 const categories = ref([])
@@ -28,22 +37,31 @@ const filters = ref({
 
 async function fetchProducts() {
   loading.value = true
+  loadError.value = false
   const params = { ...filters.value, per_page: 12 }
   Object.keys(params).forEach((k) => { if (!params[k]) delete params[k] })
 
-  const { data } = await api.get('/products', { params })
-  products.value = data.data.data
-  pagination.value = {
-    current_page: data.data.current_page,
-    last_page: data.data.last_page,
-    total: data.data.total,
+  try {
+    const { data } = await api.get('/products', { params })
+    products.value = data.data.data
+    pagination.value = {
+      current_page: data.data.current_page,
+      last_page: data.data.last_page,
+      total: data.data.total,
+    }
+  } catch {
+    loadError.value = true
+    toast.error(t('toast.load_error'))
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 
 async function fetchCategories() {
-  const { data } = await api.get('/categories')
-  categories.value = data.data
+  try {
+    const { data } = await api.get('/categories')
+    categories.value = data.data
+  } catch { /* silent — categories filter will be empty */ }
 }
 
 function applyFilters() {
@@ -68,10 +86,19 @@ function updateQuery() {
 
 function addToCart(product) {
   cart.addItem({ id: product.id, name: product.name, price: Number(product.price), image_url: product.image_url })
+  toast.success(t('toast.added_to_cart'))
 }
+
+watch(debouncedSearch, (val) => {
+  if (val !== filters.value.search) {
+    filters.value.search = val
+    applyFilters()
+  }
+})
 
 watch(() => route.query, () => {
   filters.value.search = route.query.search ?? ''
+  searchInput.value = filters.value.search
   filters.value.category = route.query.category ?? ''
   filters.value.sort = route.query.sort ?? 'created_at'
   filters.value.order = route.query.order ?? 'desc'
@@ -95,7 +122,7 @@ onMounted(() => {
         <div class="flex-1 min-w-[200px]">
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('products.search') }}</label>
           <input
-            v-model="filters.search"
+            v-model="searchInput"
             type="text"
             :placeholder="t('products.search_placeholder')"
             class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
@@ -125,8 +152,17 @@ onMounted(() => {
       <!-- Results count -->
       <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ t('products.found', { count: pagination.total ?? 0 }) }}</p>
 
-      <!-- Loading -->
-      <div v-if="loading" class="text-center py-12 text-gray-500 dark:text-gray-400">{{ t('products.loading') }}</div>
+      <!-- Loading skeleton -->
+      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div v-for="n in 8" :key="n" class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 animate-pulse">
+          <div class="h-48 bg-gray-200 dark:bg-gray-600"></div>
+          <div class="p-4 space-y-3">
+            <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-16"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div>
+            <div class="h-5 bg-gray-200 dark:bg-gray-600 rounded w-20"></div>
+          </div>
+        </div>
+      </div>
 
       <!-- Products Grid -->
       <div v-else-if="products.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -137,7 +173,7 @@ onMounted(() => {
         >
           <RouterLink :to="`/products/${product.slug}`">
             <div class="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
-              <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <img v-if="product.image_url" :src="product.image_url" :alt="product.name" loading="lazy" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
               <div v-else class="h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">{{ t('products.no_image') }}</div>
             </div>
           </RouterLink>
@@ -161,7 +197,11 @@ onMounted(() => {
         </div>
       </div>
 
-      <div v-else class="text-center py-12 text-gray-500 dark:text-gray-400">{{ t('products.no_products') }}</div>
+      <div v-else class="text-center py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <p class="text-gray-500 dark:text-gray-400 text-lg mb-2">{{ t('products.no_products') }}</p>
+        <button @click="filters.search = ''; filters.category = ''; applyFilters()" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium cursor-pointer">{{ t('products.clear_filters') || 'Clear filters' }}</button>
+      </div>
 
       <!-- Pagination -->
       <div v-if="pagination.last_page > 1" class="flex justify-center mt-8 space-x-2">

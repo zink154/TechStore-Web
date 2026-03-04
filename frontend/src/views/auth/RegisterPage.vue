@@ -4,8 +4,10 @@ import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
+import { useToast } from '@/composables/useToast'
 
 const { t } = useI18n()
+const toast = useToast()
 const router = useRouter()
 const auth = useAuthStore()
 
@@ -18,6 +20,7 @@ async function handleSubmit() {
   loading.value = true
   try {
     await auth.register(form.value)
+    toast.success(t('toast.register_success'))
     router.push('/')
   } catch (e) {
     if (e.response?.data?.errors) {

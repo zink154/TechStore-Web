@@ -4,8 +4,10 @@ import { ref } from 'vue'
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
+import { useToast } from '@/composables/useToast'
 
 const { t } = useI18n()
+const toast = useToast()
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
@@ -19,6 +21,7 @@ async function handleSubmit() {
   loading.value = true
   try {
     await auth.login(form.value)
+    toast.success(t('toast.login_success'))
     router.push(route.query.redirect ?? '/')
   } catch (e) {
     error.value = e.response?.data?.message ?? 'Login failed.'
