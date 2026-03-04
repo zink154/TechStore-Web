@@ -40,10 +40,17 @@ class AdminProductController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
-            $result = Cloudinary::upload($request->file('image')->getRealPath(), [
-                'folder' => 'techstore/products',
-            ]);
-            $validated['image_url'] = $result->getSecurePath();
+            try {
+                $result = Cloudinary::upload($request->file('image')->getRealPath(), [
+                    'folder' => 'techstore/products',
+                ]);
+                $validated['image_url'] = $result->getSecurePath();
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Image upload failed: ' . $e->getMessage(),
+                ], 422);
+            }
         }
 
         unset($validated['image']);
@@ -85,10 +92,17 @@ class AdminProductController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $result = Cloudinary::upload($request->file('image')->getRealPath(), [
-                'folder' => 'techstore/products',
-            ]);
-            $validated['image_url'] = $result->getSecurePath();
+            try {
+                $result = Cloudinary::upload($request->file('image')->getRealPath(), [
+                    'folder' => 'techstore/products',
+                ]);
+                $validated['image_url'] = $result->getSecurePath();
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Image upload failed: ' . $e->getMessage(),
+                ], 422);
+            }
         }
 
         unset($validated['image']);
