@@ -83,8 +83,8 @@ function addToCart() {
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <!-- Image -->
-          <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 h-96 flex items-center justify-center overflow-hidden shadow-sm">
-            <img v-if="product.image_url" :src="product.image_url" :alt="product.name" loading="lazy" class="h-full w-full object-cover hover:scale-105 transition-transform duration-300" />
+          <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 flex items-center justify-center overflow-hidden shadow-sm p-4">
+            <img v-if="product.image_url" :src="product.image_url" :alt="product.name" loading="lazy" class="max-h-[28rem] w-auto object-contain hover:scale-105 transition-transform duration-300" />
             <span v-else class="text-gray-400 dark:text-gray-500">{{ t('products.no_image') }}</span>
           </div>
 
