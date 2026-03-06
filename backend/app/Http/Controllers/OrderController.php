@@ -59,19 +59,33 @@ class OrderController extends Controller
             $total += $product->price * $item['quantity'];
         }
 
-        Stripe::setApiKey(config('services.stripe.secret'));
+        $stripeSecret = config('services.stripe.secret');
 
-        $paymentIntent = PaymentIntent::create([
-            'amount' => (int) round($total * 100),
-            'currency' => 'usd',
-            'metadata' => ['user_id' => $request->user()->id],
-        ]);
+        if ($stripeSecret && !str_contains($stripeSecret, 'your_stripe')) {
+            Stripe::setApiKey($stripeSecret);
 
+            $paymentIntent = PaymentIntent::create([
+                'amount' => (int) round($total * 100),
+                'currency' => 'usd',
+                'metadata' => ['user_id' => $request->user()->id],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'client_secret' => $paymentIntent->client_secret,
+                    'total' => $total,
+                ],
+            ]);
+        }
+
+        // Stripe not configured — return demo response
         return response()->json([
             'success' => true,
             'data' => [
-                'client_secret' => $paymentIntent->client_secret,
+                'client_secret' => null,
                 'total' => $total,
+                'demo' => true,
             ],
         ]);
     }

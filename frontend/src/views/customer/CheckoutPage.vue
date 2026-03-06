@@ -59,7 +59,7 @@ async function handleCheckout() {
 
     let paymentIntentId = 'demo_payment'
 
-    if (stripe.value && cardMounted.value) {
+    if (stripe.value && cardMounted.value && piData.data.client_secret) {
       const { error: stripeError, paymentIntent } = await stripe.value.confirmCardPayment(
         piData.data.client_secret,
         { payment_method: { card: cardElement.value } }
