@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,12 +25,16 @@ class AdminCategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:categories'],
+            'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $category = Category::create([
             'name' => $validated['name'],
             'slug' => Str::slug($validated['name']),
+            'description' => $validated['description'] ?? null,
         ]);
+
+        ActivityLog::log('created', 'Category', $category->id, "Created category: {$category->name}");
 
         return response()->json([
             'success' => true,
@@ -44,12 +49,16 @@ class AdminCategoryController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', "unique:categories,name,{$id}"],
+            'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $category->update([
             'name' => $validated['name'],
             'slug' => Str::slug($validated['name']),
+            'description' => $validated['description'] ?? null,
         ]);
+
+        ActivityLog::log('updated', 'Category', $category->id, "Updated category: {$category->name}");
 
         return response()->json([
             'success' => true,
@@ -69,7 +78,10 @@ class AdminCategoryController extends Controller
             ], 422);
         }
 
+        $name = $category->name;
         $category->delete();
+
+        ActivityLog::log('deleted', 'Category', $id, "Deleted category: {$name}");
 
         return response()->json([
             'success' => true,

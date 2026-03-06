@@ -53,6 +53,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
     Route::apiResource('/products', AdminProductController::class);
     Route::patch('/products/{id}/featured', [AdminProductController::class, 'toggleFeatured']);
+    Route::post('/products/{id}/duplicate', [AdminProductController::class, 'duplicate']);
+    Route::post('/products/bulk', [AdminProductController::class, 'bulkAction']);
     Route::apiResource('/categories', AdminCategoryController::class)->except(['show']);
 
     Route::get('/orders', [AdminOrderController::class, 'index']);

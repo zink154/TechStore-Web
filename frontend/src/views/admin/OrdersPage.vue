@@ -1,15 +1,27 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import api from '@/lib/axios'
 import { useCurrency } from '@/composables/useCurrency'
 import { useToast } from '@/composables/useToast'
+import { useDebounce } from '@/composables/useDebounce'
+import { useCsvExport } from '@/composables/useCsvExport'
+import { useI18n } from 'vue-i18n'
+import SkeletonLoader from '@/components/admin/SkeletonLoader.vue'
+import PaginationBar from '@/components/admin/PaginationBar.vue'
+import OrderTimeline from '@/components/admin/OrderTimeline.vue'
 
+const { t } = useI18n()
 const { formatPrice } = useCurrency()
 const toast = useToast()
+const { exportCsv } = useCsvExport()
 
 const orders = ref([])
 const loading = ref(true)
 const filterStatus = ref('')
+const searchInput = ref('')
+const debouncedSearch = useDebounce(searchInput, 400)
+const page = ref(1)
+const pagination = ref({ current_page: 1, last_page: 1, total: 0, from: 0, to: 0 })
 
 const statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
 
@@ -23,50 +35,96 @@ const statusColors = {
 
 onMounted(() => fetchOrders())
 
+watch(filterStatus, () => { page.value = 1; fetchOrders() })
+watch(debouncedSearch, () => { page.value = 1; fetchOrders() })
+
 async function fetchOrders() {
   loading.value = true
   try {
-    const params = {}
+    const params = { page: page.value }
     if (filterStatus.value) params.status = filterStatus.value
+    if (debouncedSearch.value) params.search = debouncedSearch.value
     const { data } = await api.get('/admin/orders', { params })
     orders.value = data.data.data
+    pagination.value = {
+      current_page: data.data.current_page,
+      last_page: data.data.last_page,
+      total: data.data.total,
+      from: data.data.from || 0,
+      to: data.data.to || 0,
+    }
   } catch {
-    toast.error('Failed to load orders.')
+    toast.error(t('toast.load_error'))
   } finally {
     loading.value = false
   }
 }
 
+function handlePageChange(p) {
+  page.value = p
+  fetchOrders()
+}
+
 async function updateStatus(orderId, newStatus) {
   try {
     await api.patch(`/admin/orders/${orderId}/status`, { status: newStatus })
-    toast.success('Order status updated!')
+    toast.success(t('toast.status_updated'))
     await fetchOrders()
   } catch (e) {
     toast.error(e.response?.data?.message ?? 'Failed to update status.')
   }
 }
+
+function handleExportCsv() {
+  const headers = ['Order ID', 'Customer', 'Phone', 'Total', 'Status', 'Date']
+  const rows = orders.value.map(o => [
+    o.id,
+    o.user?.name ?? '',
+    o.phone ?? '',
+    o.total,
+    o.status,
+    new Date(o.created_at).toLocaleDateString(),
+  ])
+  exportCsv('orders', headers, rows)
+}
 </script>
 
 <template>
   <div>
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Orders</h1>
-      <select v-model="filterStatus" @change="fetchOrders" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none">
-        <option value="">All Statuses</option>
-        <option v-for="s in statuses" :key="s" :value="s" class="capitalize">{{ s }}</option>
-      </select>
+    <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ t('admin.orders') }}</h1>
+      <button @click="handleExportCsv" class="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+        {{ t('admin.export_csv') }}
+      </button>
     </div>
 
-    <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading...</div>
+    <!-- Search & Filter -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 p-4 mb-4 flex flex-wrap gap-4 items-end">
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('products.search') }}</label>
+        <input v-model="searchInput" type="text" :placeholder="t('admin.search_orders')"
+               class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <div class="min-w-[150px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('admin.status') }}</label>
+        <select v-model="filterStatus"
+                class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none">
+          <option value="">{{ t('admin.all_status') }}</option>
+          <option v-for="s in statuses" :key="s" :value="s">{{ t(`orders.status.${s}`) }}</option>
+        </select>
+      </div>
+    </div>
 
-    <div v-else-if="orders.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">No orders found.</div>
+    <!-- Loading -->
+    <SkeletonLoader v-if="loading" type="cards" :rows="3" />
+
+    <div v-else-if="orders.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">{{ t('admin.no_data') }}</div>
 
     <div v-else class="space-y-4">
       <div v-for="order in orders" :key="order.id" class="bg-white rounded-lg shadow-sm border border-gray-100 dark:bg-gray-800 dark:border-gray-700 p-6">
-        <div class="flex flex-wrap justify-between items-start gap-4 mb-4">
+        <div class="flex flex-wrap justify-between items-start gap-4 mb-2">
           <div>
-            <h3 class="font-semibold text-gray-900 dark:text-gray-100">Order #{{ order.id }}</h3>
+            <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ t('orders.order_id', { id: order.id }) }}</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400">
               {{ order.user?.name }} &mdash; {{ order.phone }}
             </p>
@@ -80,15 +138,18 @@ async function updateStatus(orderId, newStatus) {
                 @change="updateStatus(order.id, ($event.target).value)"
                 :class="[statusColors[order.status], 'rounded-full text-xs font-medium px-3 py-1 border-0 outline-none cursor-pointer']"
               >
-                <option v-for="s in statuses" :key="s" :value="s" class="capitalize">{{ s }}</option>
+                <option v-for="s in statuses" :key="s" :value="s">{{ t(`orders.status.${s}`) }}</option>
               </select>
             </div>
           </div>
         </div>
 
+        <!-- Order Timeline -->
+        <OrderTimeline :current-status="order.status" />
+
         <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-          <strong>Address:</strong> {{ order.shipping_address }}
-          <span v-if="order.notes"> | <strong>Notes:</strong> {{ order.notes }}</span>
+          <strong>{{ t('order_confirmation.shipping_to') }}:</strong> {{ order.shipping_address }}
+          <span v-if="order.notes"> | <strong>{{ t('checkout.notes') }}:</strong> {{ order.notes }}</span>
         </div>
 
         <div class="border-t border-gray-100 dark:border-gray-700 pt-3 space-y-1">
@@ -98,6 +159,15 @@ async function updateStatus(orderId, newStatus) {
           </div>
         </div>
       </div>
+
+      <PaginationBar
+        :current-page="pagination.current_page"
+        :last-page="pagination.last_page"
+        :total="pagination.total"
+        :from="pagination.from"
+        :to="pagination.to"
+        @page-change="handlePageChange"
+      />
     </div>
   </div>
 </template>
