@@ -15,9 +15,25 @@ class AdminProductController extends Controller
     {
         $perPage = min((int) $request->input('per_page', 15), 100);
 
-        $products = Product::with('category')
-            ->orderByDesc('created_at')
-            ->paginate($perPage);
+        $query = Product::with('category');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(fn ($q) => $q
+                ->where('name', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+            );
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->has('is_active')) {
+            $query->where('is_active', $request->boolean('is_active'));
+        }
+
+        $products = $query->orderByDesc('created_at')->paginate($perPage);
 
         return response()->json([
             'success' => true,

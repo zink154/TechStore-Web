@@ -50,6 +50,12 @@ async function handleSubmit() {
             <input v-model="form.password" type="password" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
           </div>
 
+          <div class="text-right">
+            <RouterLink to="/forgot-password" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
+              {{ t('auth.forgot_password') }}
+            </RouterLink>
+          </div>
+
           <button type="submit" :disabled="loading" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 cursor-pointer">
             {{ loading ? t('common.loading') : t('auth.login_btn') }}
           </button>

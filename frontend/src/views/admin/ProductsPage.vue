@@ -1,9 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import api from '@/lib/axios'
 import { useCurrency } from '@/composables/useCurrency'
 import { useToast } from '@/composables/useToast'
+import { useDebounce } from '@/composables/useDebounce'
+import { useI18n } from 'vue-i18n'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
+const { t } = useI18n()
 const { formatPrice } = useCurrency()
 const toast = useToast()
 
@@ -12,22 +16,37 @@ const categories = ref([])
 const loading = ref(true)
 const showModal = ref(false)
 const editing = ref(null)
+const confirmTarget = ref(null)
 
 const form = ref({ category_id: '', name: '', description: '', price: '', stock: '', is_active: true, image: null })
 
+// Search & filter
+const searchInput = ref('')
+const debouncedSearch = useDebounce(searchInput, 400)
+const filterCategory = ref('')
+const filterStatus = ref('')
+
 onMounted(async () => {
-  await fetchProducts()
   const { data } = await api.get('/admin/categories')
   categories.value = data.data
+  await fetchProducts()
 })
+
+watch(debouncedSearch, () => fetchProducts())
+watch(filterCategory, () => fetchProducts())
+watch(filterStatus, () => fetchProducts())
 
 async function fetchProducts() {
   loading.value = true
   try {
-    const { data } = await api.get('/admin/products')
+    const params = {}
+    if (debouncedSearch.value) params.search = debouncedSearch.value
+    if (filterCategory.value) params.category_id = filterCategory.value
+    if (filterStatus.value !== '') params.is_active = filterStatus.value
+    const { data } = await api.get('/admin/products', { params })
     products.value = data.data.data
   } catch {
-    toast.error('Failed to load products.')
+    toast.error(t('toast.load_error'))
   } finally {
     loading.value = false
   }
@@ -78,7 +97,7 @@ async function handleSubmit() {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
     }
-    toast.success('Product saved!')
+    toast.success(t('toast.product_saved'))
     showModal.value = false
     await fetchProducts()
   } catch (e) {
@@ -96,11 +115,16 @@ async function toggleFeatured(product) {
   }
 }
 
-async function deleteProduct(id) {
-  if (!confirm('Delete this product?')) return
+function requestDelete(id) {
+  confirmTarget.value = id
+}
+
+async function confirmDelete() {
+  const id = confirmTarget.value
+  confirmTarget.value = null
   try {
     await api.delete(`/admin/products/${id}`)
-    toast.success('Product deleted!')
+    toast.success(t('toast.product_deleted'))
     await fetchProducts()
   } catch (e) {
     toast.error(e.response?.data?.message ?? 'Failed to delete product.')
@@ -111,13 +135,39 @@ async function deleteProduct(id) {
 <template>
   <div>
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Products</h1>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ t('admin.products') || 'Products' }}</h1>
       <button @click="openCreate" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 cursor-pointer">
-        + Add Product
+        + {{ t('admin.add_product') || 'Add Product' }}
       </button>
     </div>
 
-    <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading...</div>
+    <!-- Search & Filter -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 p-4 mb-4 flex flex-wrap gap-4 items-end">
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('products.search') }}</label>
+        <input v-model="searchInput" type="text" :placeholder="t('products.search_placeholder')"
+               class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <div class="min-w-[150px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('products.category') }}</label>
+        <select v-model="filterCategory"
+                class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none">
+          <option value="">{{ t('products.all_categories') }}</option>
+          <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+        </select>
+      </div>
+      <div class="min-w-[130px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('admin.status') || 'Status' }}</label>
+        <select v-model="filterStatus"
+                class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none">
+          <option value="">{{ t('admin.all_status') || 'All' }}</option>
+          <option value="1">{{ t('admin.active') || 'Active' }}</option>
+          <option value="0">{{ t('admin.inactive') || 'Inactive' }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div v-if="loading" class="text-gray-500 dark:text-gray-400">{{ t('common.loading') }}</div>
 
     <div v-else class="bg-white rounded-lg shadow-sm border border-gray-100 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
       <table class="w-full text-sm">
@@ -147,7 +197,7 @@ async function deleteProduct(id) {
             <td class="px-4 py-3">{{ product.stock }}</td>
             <td class="px-4 py-3">
               <span :class="product.is_active ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'" class="text-xs font-medium">
-                {{ product.is_active ? 'Active' : 'Inactive' }}
+                {{ product.is_active ? (t('admin.active') || 'Active') : (t('admin.inactive') || 'Inactive') }}
               </span>
             </td>
             <td class="px-4 py-3 text-center">
@@ -161,15 +211,15 @@ async function deleteProduct(id) {
               </button>
             </td>
             <td class="px-4 py-3">
-              <button @click="openEdit(product)" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs mr-3 cursor-pointer">Edit</button>
-              <button @click="deleteProduct(product.id)" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs cursor-pointer">Delete</button>
+              <button @click="openEdit(product)" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs mr-3 cursor-pointer">{{ t('common.edit') }}</button>
+              <button @click="requestDelete(product.id)" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs cursor-pointer">{{ t('common.delete') }}</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Modal -->
+    <!-- Product Modal -->
     <div v-if="showModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" @click.self="showModal = false" @keydown.escape="showModal = false">
       <div class="bg-white rounded-lg dark:bg-gray-800 w-full max-w-lg p-6" role="dialog" aria-modal="true">
         <h2 class="text-lg font-semibold dark:text-gray-100 mb-4">{{ editing ? 'Edit Product' : 'Add Product' }}</h2>
@@ -215,11 +265,20 @@ async function deleteProduct(id) {
           </label>
 
           <div class="flex gap-3 pt-2">
-            <button type="button" @click="showModal = false" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">Cancel</button>
-            <button type="submit" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 cursor-pointer">Save</button>
+            <button type="button" @click="showModal = false" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">{{ t('common.cancel') }}</button>
+            <button type="submit" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 cursor-pointer">{{ t('common.save') }}</button>
           </div>
         </form>
       </div>
     </div>
+
+    <!-- Delete Confirm -->
+    <ConfirmModal
+      v-if="confirmTarget"
+      :title="t('confirm.delete_title')"
+      :message="t('confirm.delete_product')"
+      @confirm="confirmDelete"
+      @cancel="confirmTarget = null"
+    />
   </div>
 </template>

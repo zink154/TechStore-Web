@@ -2,8 +2,9 @@
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
+import { useWishlistStore } from '@/stores/wishlist'
 import { useThemeStore } from '@/stores/theme'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
@@ -11,8 +12,10 @@ const { t, locale } = useI18n()
 const toast = useToast()
 const auth = useAuthStore()
 const cart = useCartStore()
+const wishlist = useWishlistStore()
 const themeStore = useThemeStore()
 const mobileOpen = ref(false)
+const cartAnimating = ref(false)
 
 function toggleLocale() {
   const next = locale.value === 'en' ? 'vi' : 'en'
@@ -20,10 +23,18 @@ function toggleLocale() {
   localStorage.setItem('locale', next)
 }
 
+watch(() => cart.count, (newVal, oldVal) => {
+  if (oldVal !== undefined && newVal !== oldVal && newVal > 0) {
+    cartAnimating.value = true
+    setTimeout(() => { cartAnimating.value = false }, 300)
+  }
+})
+
 async function handleLogout() {
   try {
     await auth.logout()
   } catch { /* ignore */ }
+  wishlist.clear()
   toast.info(t('toast.logout_success'))
   mobileOpen.value = false
 }
@@ -71,11 +82,22 @@ async function handleLogout() {
             {{ locale === 'en' ? 'VI' : 'EN' }}
           </button>
 
+          <!-- Wishlist -->
+          <RouterLink v-if="auth.isAuthenticated" to="/wishlist" :aria-label="t('nav.wishlist')" class="relative text-gray-700 dark:text-gray-200 hover:text-red-500 dark:hover:text-red-400 p-2 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/>
+            </svg>
+            <span v-if="wishlist.count > 0" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {{ wishlist.count }}
+            </span>
+          </RouterLink>
+
+          <!-- Cart -->
           <RouterLink to="/cart" :aria-label="t('nav.cart')" class="relative text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 p-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
-            <span v-if="cart.count > 0" class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <span v-if="cart.count > 0" :class="['absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center', cartAnimating && 'animate-bounce-badge']">
               {{ cart.count }}
             </span>
           </RouterLink>
@@ -123,11 +145,19 @@ async function handleLogout() {
           >
             {{ locale === 'en' ? 'VI' : 'EN' }}
           </button>
+          <RouterLink v-if="auth.isAuthenticated" to="/wishlist" :aria-label="t('nav.wishlist')" class="relative text-gray-700 dark:text-gray-200 p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/>
+            </svg>
+            <span v-if="wishlist.count > 0" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
+              {{ wishlist.count }}
+            </span>
+          </RouterLink>
           <RouterLink to="/cart" :aria-label="t('nav.cart')" class="relative text-gray-700 dark:text-gray-200 p-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
-            <span v-if="cart.count > 0" class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <span v-if="cart.count > 0" :class="['absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center', cartAnimating && 'animate-bounce-badge']">
               {{ cart.count }}
             </span>
           </RouterLink>
@@ -146,6 +176,7 @@ async function handleLogout() {
         <RouterLink to="/products" @click="mobileOpen = false" class="block text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 py-2">{{ t('nav.products') }}</RouterLink>
         <template v-if="auth.isAuthenticated">
           <RouterLink v-if="auth.isAdmin" to="/admin" @click="mobileOpen = false" class="block text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 py-2">{{ t('nav.admin') }}</RouterLink>
+          <RouterLink to="/wishlist" @click="mobileOpen = false" class="block text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 py-2">{{ t('nav.wishlist') }}</RouterLink>
           <RouterLink to="/orders" @click="mobileOpen = false" class="block text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 py-2">{{ t('nav.orders') }}</RouterLink>
           <RouterLink to="/profile" @click="mobileOpen = false" class="block text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 py-2">{{ t('nav.profile') }}</RouterLink>
           <button @click="handleLogout" class="block text-red-600 dark:text-red-400 py-2 cursor-pointer">{{ t('nav.logout') }}</button>
@@ -158,3 +189,13 @@ async function handleLogout() {
     </div>
   </nav>
 </template>
+
+<style scoped>
+@keyframes bounce-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+.animate-bounce-badge {
+  animation: bounce-badge 0.3s ease-out;
+}
+</style>

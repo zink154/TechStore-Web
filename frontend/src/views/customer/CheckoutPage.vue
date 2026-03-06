@@ -72,7 +72,7 @@ async function handleCheckout() {
       paymentIntentId = paymentIntent.id
     }
 
-    await api.post('/checkout', {
+    const response = await api.post('/checkout', {
       items,
       shipping_address: form.value.shipping_address,
       phone: form.value.phone,
@@ -82,7 +82,7 @@ async function handleCheckout() {
 
     cart.clearCart()
     toast.success(t('toast.order_placed'))
-    router.push('/orders')
+    router.push(`/order-confirmation/${response.data.data.id}`)
   } catch (e) {
     error.value = e.response?.data?.message ?? 'Checkout failed.'
   } finally {

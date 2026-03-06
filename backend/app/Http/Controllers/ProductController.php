@@ -18,7 +18,10 @@ class ProductController extends Controller
 
         $perPage = min((int) $request->input('per_page', 12), 100);
 
-        $query = Product::with('category')->where('is_active', true);
+        $query = Product::with('category')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->where('is_active', true);
 
         if ($request->boolean('featured')) {
             $query->where('is_featured', true);
@@ -63,6 +66,8 @@ class ProductController extends Controller
     public function show(string $slug): JsonResponse
     {
         $product = Product::with('category')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
             ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();

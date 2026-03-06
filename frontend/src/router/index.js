@@ -11,6 +11,8 @@ const routes = [
   // Auth
   { path: '/login', component: () => import('@/views/auth/LoginPage.vue') },
   { path: '/register', component: () => import('@/views/auth/RegisterPage.vue') },
+  { path: '/forgot-password', component: () => import('@/views/auth/ForgotPasswordPage.vue') },
+  { path: '/reset-password', component: () => import('@/views/auth/ResetPasswordPage.vue') },
 
   // Customer (requires auth)
   {
@@ -19,8 +21,18 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/order-confirmation/:id',
+    component: () => import('@/views/customer/OrderConfirmationPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/orders',
     component: () => import('@/views/customer/OrderHistoryPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/wishlist',
+    component: () => import('@/views/customer/WishlistPage.vue'),
     meta: { requiresAuth: true },
   },
   {

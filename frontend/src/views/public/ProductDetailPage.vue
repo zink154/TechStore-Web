@@ -1,9 +1,14 @@
 <script setup>
 import DefaultLayout from '@/components/layout/DefaultLayout.vue'
+import ReviewSection from '@/components/common/ReviewSection.vue'
+import RelatedProducts from '@/components/common/RelatedProducts.vue'
+import StarRating from '@/components/common/StarRating.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import api from '@/lib/axios'
 import { useCartStore } from '@/stores/cart'
+import { useAuthStore } from '@/stores/auth'
+import { useWishlistStore } from '@/stores/wishlist'
 import { useI18n } from 'vue-i18n'
 import { useCurrency } from '@/composables/useCurrency'
 import { useToast } from '@/composables/useToast'
@@ -14,6 +19,8 @@ const { formatPrice } = useCurrency()
 const toast = useToast()
 const route = useRoute()
 const cart = useCartStore()
+const auth = useAuthStore()
+const wishlist = useWishlistStore()
 const product = ref(null)
 
 useMeta(computed(() => product.value?.name))
@@ -28,6 +35,9 @@ async function loadProduct() {
   try {
     const { data } = await api.get(`/products/${route.params.id}`)
     product.value = data.data
+    if (auth.isAuthenticated) {
+      wishlist.checkProducts([data.data.id])
+    }
   } catch {
     loadError.value = true
     toast.error(t('toast.load_error'))
@@ -47,6 +57,15 @@ function addToCart() {
   toast.success(t('toast.added_to_cart'))
   added.value = true
   setTimeout(() => { added.value = false }, 2000)
+}
+
+async function toggleWishlist() {
+  try {
+    const wishlisted = await wishlist.toggle(product.value.id)
+    toast.success(wishlisted ? t('wishlist.added') : t('wishlist.removed'))
+  } catch {
+    toast.error(t('common.error'))
+  }
 }
 </script>
 
@@ -90,8 +109,31 @@ function addToCart() {
 
           <!-- Info -->
           <div>
-            <p class="text-sm text-indigo-600 dark:text-indigo-400 font-medium mb-2">{{ product.category?.name }}</p>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">{{ product.name }}</h1>
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm text-indigo-600 dark:text-indigo-400 font-medium mb-2">{{ product.category?.name }}</p>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ product.name }}</h1>
+              </div>
+              <button
+                v-if="auth.isAuthenticated"
+                @click="toggleWishlist"
+                :aria-label="wishlist.isWishlisted(product.id) ? t('wishlist.remove') : t('wishlist.add')"
+                class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer flex-shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     :fill="wishlist.isWishlisted(product.id) ? 'currentColor' : 'none'"
+                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                     :class="['w-6 h-6', wishlist.isWishlisted(product.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500']">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/>
+                </svg>
+              </button>
+            </div>
+
+            <div v-if="product.reviews_avg_rating" class="flex items-center gap-2 mb-4">
+              <StarRating :value="Math.round(Number(product.reviews_avg_rating))" readonly />
+              <span class="text-sm text-gray-500 dark:text-gray-400">({{ product.reviews_count }})</span>
+            </div>
+
             <p class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">{{ formatPrice(product.price) }}</p>
 
             <div class="mb-6">
@@ -118,6 +160,18 @@ function addToCart() {
             </div>
           </div>
         </div>
+
+        <!-- Reviews -->
+        <ReviewSection :product-slug="route.params.id" />
+
+        <!-- Related Products -->
+        <RelatedProducts
+          v-if="product.category"
+          :category-slug="product.category.slug"
+          :category-name="product.category.name"
+          :current-product-id="product.id"
+          class="mt-16"
+        />
       </template>
     </div>
   </DefaultLayout>

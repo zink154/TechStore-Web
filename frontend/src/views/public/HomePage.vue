@@ -1,5 +1,6 @@
 <script setup>
 import DefaultLayout from '@/components/layout/DefaultLayout.vue'
+import StarRating from '@/components/common/StarRating.vue'
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import api from '@/lib/axios'
@@ -248,7 +249,11 @@ onMounted(loadData)
               <RouterLink :to="`/products/${product.slug}`">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ product.name }}</h3>
               </RouterLink>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{{ product.description }}</p>
+              <div v-if="product.reviews_avg_rating" class="flex items-center gap-1 mt-1">
+                <StarRating :value="Math.round(Number(product.reviews_avg_rating))" readonly size="sm" />
+                <span class="text-xs text-gray-500 dark:text-gray-400">({{ product.reviews_count }})</span>
+              </div>
+              <p v-else class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{{ product.description }}</p>
               <div class="flex justify-between items-center mt-3">
                 <span class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ formatPrice(product.price) }}</span>
                 <button

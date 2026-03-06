@@ -2,7 +2,10 @@
 import { ref, onMounted } from 'vue'
 import api from '@/lib/axios'
 import { useToast } from '@/composables/useToast'
+import { useI18n } from 'vue-i18n'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
+const { t } = useI18n()
 const toast = useToast()
 const categories = ref([])
 const loading = ref(true)
@@ -10,6 +13,7 @@ const showModal = ref(false)
 const editing = ref(null)
 const form = ref({ name: '' })
 const error = ref('')
+const confirmTarget = ref(null)
 
 onMounted(() => fetchCategories())
 
@@ -19,7 +23,7 @@ async function fetchCategories() {
     const { data } = await api.get('/admin/categories')
     categories.value = data.data
   } catch {
-    toast.error('Failed to load categories.')
+    toast.error(t('toast.load_error'))
   } finally {
     loading.value = false
   }
@@ -47,7 +51,7 @@ async function handleSubmit() {
     } else {
       await api.post('/admin/categories', form.value)
     }
-    toast.success('Category saved!')
+    toast.success(t('toast.category_saved'))
     showModal.value = false
     await fetchCategories()
   } catch (e) {
@@ -55,11 +59,16 @@ async function handleSubmit() {
   }
 }
 
-async function deleteCategory(id) {
-  if (!confirm('Delete this category?')) return
+function requestDelete(id) {
+  confirmTarget.value = id
+}
+
+async function confirmDelete() {
+  const id = confirmTarget.value
+  confirmTarget.value = null
   try {
     await api.delete(`/admin/categories/${id}`)
-    toast.success('Category deleted!')
+    toast.success(t('toast.category_deleted'))
     await fetchCategories()
   } catch (e) {
     toast.error(e.response?.data?.message ?? 'Cannot delete.')
@@ -70,13 +79,13 @@ async function deleteCategory(id) {
 <template>
   <div>
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Categories</h1>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ t('admin.categories') || 'Categories' }}</h1>
       <button @click="openCreate" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 cursor-pointer">
-        + Add Category
+        + {{ t('admin.add_category') || 'Add Category' }}
       </button>
     </div>
 
-    <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading...</div>
+    <div v-if="loading" class="text-gray-500 dark:text-gray-400">{{ t('common.loading') }}</div>
 
     <div v-else class="bg-white rounded-lg shadow-sm border border-gray-100 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
       <table class="w-full text-sm">
@@ -94,8 +103,8 @@ async function deleteCategory(id) {
             <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ cat.slug }}</td>
             <td class="px-4 py-3">{{ cat.products_count }}</td>
             <td class="px-4 py-3">
-              <button @click="openEdit(cat)" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs mr-3 cursor-pointer">Edit</button>
-              <button @click="deleteCategory(cat.id)" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs cursor-pointer">Delete</button>
+              <button @click="openEdit(cat)" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs mr-3 cursor-pointer">{{ t('common.edit') }}</button>
+              <button @click="requestDelete(cat.id)" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs cursor-pointer">{{ t('common.delete') }}</button>
             </td>
           </tr>
         </tbody>
@@ -116,11 +125,20 @@ async function deleteCategory(id) {
           </div>
 
           <div class="flex gap-3">
-            <button type="button" @click="showModal = false" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">Cancel</button>
-            <button type="submit" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 cursor-pointer">Save</button>
+            <button type="button" @click="showModal = false" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">{{ t('common.cancel') }}</button>
+            <button type="submit" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 cursor-pointer">{{ t('common.save') }}</button>
           </div>
         </form>
       </div>
     </div>
+
+    <!-- Delete Confirm -->
+    <ConfirmModal
+      v-if="confirmTarget"
+      :title="t('confirm.delete_title')"
+      :message="t('confirm.delete_category')"
+      @confirm="confirmDelete"
+      @cancel="confirmTarget = null"
+    />
   </div>
 </template>
